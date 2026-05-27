@@ -1,0 +1,3 @@
+display_name: Draw.io Image2 Pipeline
+short_description: Research draw.io to Image2
+default_prompt: Create an image_draft folder, inventory and reuse source figures, build an editable draw.io draft, export and visually QA the PNG/SVG/PDF, then generate a GPT-Image-2 reference only after the draft passes QA.
