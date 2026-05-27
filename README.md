@@ -10,6 +10,7 @@ Each top-level skill folder keeps its own README files and contains an installab
 
 | Skill | Summary | Typical Use | Installable Directory |
 | --- | --- | --- | --- |
+| [`drawio-image2-pipeline`](./drawio-image2-pipeline/) | Two-stage research figure workflow that first builds an editable draw.io draft, reuses source paper/poster assets when available, runs visual QA on the exports, and only then generates a GPT-Image-2 stylized reference image. | Paper figures, posters, slide visuals, and concept diagrams that need both editable draw.io assets and a polished reference rendering. | [`drawio-image2-pipeline/drawio-image2-pipeline`](./drawio-image2-pipeline/drawio-image2-pipeline/) |
 | [`mock-review`](./mock-review/) | Mock peer-review workflow for manuscript authors. It researches venue or journal requirements, inspects manuscript PDFs, studies related literature and experimental baselines, and writes a simulated review for rebuttal preparation and paper improvement. | Pre-submission risk check, rebuttal preparation, reviewer-style critique before revising a manuscript. | [`mock-review/mock-review`](./mock-review/mock-review/) |
 | [`research-survey-loop`](./research-survey-loop/) | Long-running literature survey workflow. It creates or resumes survey tasks, maintains stable task documents, searches prioritized sources, migrates local PDFs, reads papers in chunks, and incrementally writes a Chinese survey. | Sustained literature surveys for robotics, embodied AI, computer vision, world models, navigation, manipulation, 3D perception, and adjacent topics. | [`research-survey-loop/research-survey-loop`](./research-survey-loop/research-survey-loop/) |
 
@@ -18,6 +19,9 @@ Each top-level skill folder keeps its own README files and contains an installab
 Copy the installable skill directory into your Codex skills directory.
 
 ```powershell
+# Install drawio-image2-pipeline
+Copy-Item -Recurse -Force .\drawio-image2-pipeline\drawio-image2-pipeline "$env:USERPROFILE\.codex\skills\drawio-image2-pipeline"
+
 # Install mock-review
 Copy-Item -Recurse -Force .\mock-review\mock-review "$env:USERPROFILE\.codex\skills\mock-review"
 
@@ -30,6 +34,7 @@ If `CODEX_HOME` is configured, copy the folders into `$env:CODEX_HOME\skills\` i
 ## Notes
 
 - These skills encode personal research workflows and do not represent official processes of any venue, journal, or institution.
+- `drawio-image2-pipeline` is intended for editable figure workflows and requires visual QA of exported draw.io drafts before any GPT-Image-2 generation.
 - Outputs from `mock-review` should be clearly labeled as simulated/mock reviews. They must not replace real peer review or impersonate official reviewer reports.
 - Literature retrieval should prioritize legally accessible sources such as official open-access pages, arXiv, OpenReview, and author pages.
 - For details about a specific skill, read the README files inside that skill folder.
