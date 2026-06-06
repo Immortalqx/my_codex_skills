@@ -1,32 +1,31 @@
 ---
-name: drawio-image2-pipeline
-description: Use when creating research figures, paper posters, academic presentation visuals, or conceptual diagrams through an editable draw.io/diagrams.net draft first, followed by a GPT-Image-2 stylized reference only after the draw.io export passes strict visual QA. Especially for paper figures/posters where Codex must read source materials, reuse extracted paper images or plots when useful, produce editable draw.io/SVG/PDF assets, and avoid sending broken or occluded drafts to image generation.
+name: drawio-diagram
+description: Use when creating research figures, paper posters, academic presentation visuals, or conceptual diagrams as an editable draw.io/diagrams.net draft plus PNG/SVG/PDF exports that pass strict visual QA. Especially for paper figures/posters where Codex must read source materials, reuse extracted paper images or plots when useful, and produce editable draw.io/SVG/PDF assets that the user can keep editing directly in draw.io.
 ---
 
-# Draw.io -> GPT-Image-2 Research Figure Pipeline
+# Draw.io Research Figure Pipeline
 
 ## Purpose
 
-This skill creates research visuals in two deliverables:
+This skill produces research visuals as a single deliverable:
 
-1. An editable, readable `.drawio` draft plus SVG/PDF/PNG exports.
-2. A GPT-Image-2 stylized reference image generated from the approved draw.io draft.
+1. An editable, readable `.drawio` draft plus SVG/PDF/PNG exports that pass strict visual QA.
 
-The draw.io draft is not disposable. It must be good enough for the user to edit directly before GPT-Image-2 is called.
+The draw.io draft is not disposable. It must be good enough for the user to keep editing directly in draw.io and to use as a paper or poster figure on its own.
 
 ## Non-Negotiable Gates
 
-Do not call GPT-Image-2 until all gates pass:
+Do not declare a figure ready until all gates pass:
 
 1. **Asset gate:** If the task is based on a paper, poster, PDF, slides, Markdown notes, or experiment folder, inspect available figures/images/tables first and reuse useful visual assets instead of redrawing everything from scratch. This is mandatory, not optional.
 2. **Editable draft gate:** Produce a `.drawio` that is meaningful and editable by itself. The user must be able to continue editing it in draw.io.
 3. **Export gate:** Export PNG/SVG/PDF from the `.drawio`.
 4. **Visual QA gate:** Open the exported PNG and inspect it visually. If text is clipped, occluded, distorted, overlapped, unreadable, misaligned, too small, or blocked by icons/shapes, fix the `.drawio`, re-export, and inspect again.
-5. **No-blind-generation gate:** Never say the PNG is ready just because files exist. The visual preview must be checked.
+5. **No-blind-export gate:** Never say the PNG is ready just because files exist. The visual preview must be checked.
 
-If any gate fails, repair the draw.io draft first. Do not proceed to GPT-Image-2.
+If any gate fails, repair the draw.io draft first. Do not declare the figure ready.
 
-For research posters and paper figures, the asset gate must produce an `asset_manifest.md` before drawing begins. If relevant visual assets exist but are not used, `qa_notes.md` must explain why each was rejected. GPT-Image-2 must not be called while relevant paper assets are silently ignored.
+For research posters and paper figures, the asset gate must produce an `asset_manifest.md` before drawing begins. If relevant visual assets exist but are not used, `qa_notes.md` must explain why each was rejected.
 
 ## Privacy Rule
 
@@ -43,13 +42,10 @@ image_draft/
   assets/                  # extracted paper images, plots, screenshots
   asset_manifest.md        # inventory of usable source visuals
   sketch.drawio            # editable semantic draft
-  sketch.png               # visual QA preview and Image2 input
+  sketch.png               # visual QA preview
   sketch.svg               # editable/vector export
   sketch.pdf               # paper/poster export
   qa_notes.md              # visual QA checklist and fixes
-  image2_prompt.txt
-  image2_result.png
-  image2_response.json
 ```
 
 If `image_draft/` already exists, create a versioned subfolder such as `image_draft/run_002/` unless the user asks to overwrite.
@@ -74,23 +70,11 @@ For research tasks, first build content from source materials:
 - For a paper poster, at least one relevant method/result/setup/qualitative asset should be inserted when such assets exist. If none are inserted, justify this explicitly in `qa_notes.md`.
 - If the source paper includes figures that communicate the method, robot/camera setup, dataset, results, ablations, or qualitative examples, those figures have priority over newly invented icons or generic boxes.
 - Keep figure assets as movable draw.io image objects where possible. If programmatic insertion is unreliable, use the `auto_drawio` browser editor or draw.io desktop to insert the images, then re-export and inspect.
-
-Do not write source-document names or "based on..." inside the figure unless the user explicitly asks for attribution in the graphic.
-
-Asset inventory command:
-
-```powershell
-python scripts/inventory_assets.py `
-  --root "<project-or-paper-folder>" `
-  --out "<image_draft>/asset_manifest.md" `
-  --asset-dir "<image_draft>/assets"
-```
-
-For PDF pages that contain important figures, render selected pages or crop figures into `image_draft/assets/` before drawing. Use `scripts/render_pdf_pages.py` when possible.
+- Use `scripts/render_pdf_pages.py` when possible.
 
 ## Draw.io Draft Requirements
 
-The draft must be clean before Image2:
+The draft must be clean:
 
 - Fixed canvas size appropriate to the task, usually 16:9 for posters or `1536x1024`-like landscape.
 - Stable grid: columns, rows, and section titles must align.
@@ -134,16 +118,16 @@ QA checklist:
 - [ ] Extracted figures/images are visible and not distorted.
 - [ ] Relevant source assets were inserted, or each unused relevant asset is justified in `qa_notes.md`.
 - [ ] Result numbers/axis labels are readable when included.
-- [ ] The draft is useful as an editable draw.io artifact, not merely an Image2 prompt.
+- [ ] The draft is useful as a standalone editable draw.io artifact, with all labels and structure understandable without external context.
 ```
 
-Only after every item passes may GPT-Image-2 be called.
+Only after every item passes may the figure be declared ready.
 
 ## auto_drawio Bridge
 
 If `auto_presentation/auto_drawio` is available, connect the draft so the user can watch and edit live. See `references/auto_drawio.md`.
 
-Use the bridge for interactive review whenever possible. If no bridge is available, still create the `.drawio` and inspect exported PNG before Image2.
+Use the bridge for interactive review whenever possible. If no bridge is available, still create the `.drawio` and inspect exported PNG as part of the visual QA loop.
 
 ## Export
 
@@ -155,52 +139,15 @@ powershell -ExecutionPolicy Bypass -File scripts/export_drawio.ps1 `
   -OutDir "<image_draft>"
 ```
 
-The exported PNG is the GPT-Image-2 structure input only after QA passes.
-
-For Image2 input, the PNG should be a plain visual export, not a draw.io-embedded PNG. Embedded draw.io metadata can create very large PNG text chunks and may cause upstream image processing failures. The provided export script therefore leaves PNG diagram embedding off by default; keep the editable `.drawio` as the source of truth. Use `-EmbedPngDiagram` only when a self-contained editable PNG is explicitly needed.
-
-## GPT-Image-2 Prompt
-
-Ask for the user's desired visual style if it is not provided. Do not invent the style silently.
-
-Write `image2_prompt.txt` after QA passes. It must say:
-
-- Use the attached draw.io draft as structure.
-- Preserve concepts, grouping, arrow direction, and paper-derived evidence.
-- Improve style and visual polish according to the user's specified style.
-- Do not mention source documents, PDFs, notes, or that the figure is based on a draft.
-- Do not add unrelated concepts or unsupported claims.
-
-## GPT-Image-2 Call
-
-Use `scripts/rightcode_image2.py`:
-
-```powershell
-python scripts/rightcode_image2.py `
-  --prompt-file "<image_draft>/image2_prompt.txt" `
-  --input-image "<image_draft>/sketch.png" `
-  --out "<image_draft>/image2_result.png" `
-  --response-json "<image_draft>/image2_response.json" `
-  --size "1536x1024"
-```
-
-The script reads credentials at runtime from:
-
-1. `RIGHTCODE_API_KEY`
-2. `OPENAI_API_KEY`
-3. existing local `rightcode/auth.json` under `$CODEX_HOME` or `~/.codex`
-
-It must not print or persist credentials.
-
-Before uploading PNG inputs, the script strips ancillary PNG metadata such as draw.io text chunks while preserving the rendered pixels. This keeps Image2 requests smaller and avoids failures caused by embedded diagram XML.
+The exported PNG is the visual QA preview. Embedded draw.io metadata can create very large PNG text chunks, so the provided export script leaves PNG diagram embedding off by default. Keep the editable `.drawio` as the source of truth. Use `-EmbedPngDiagram` only when a self-contained editable PNG is explicitly needed.
 
 ## Final Response
 
 Report:
 
 - Bridge URL if running.
-- `.drawio`, `.svg`, `.pdf`, `.png`, `qa_notes.md`, `image2_prompt.txt`, and `image2_result.png`.
+- `.drawio`, `.svg`, `.pdf`, `.png`, and `qa_notes.md` paths.
 - Whether source figures/images were reused.
-- Whether visual QA passed before Image2.
+- Whether visual QA passed.
 
-If visual QA did not pass, stop and report that Image2 was not called.
+If visual QA did not pass, stop and report that the figure is not ready and describe what was fixed in the latest iteration.

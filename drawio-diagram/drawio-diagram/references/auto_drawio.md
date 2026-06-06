@@ -40,4 +40,4 @@ node .\scripts\inspect-target.mjs --port 4318
 - Align same-level modules.
 - Prefer orthogonal connectors and minimize crossings.
 - Preserve human-edited layout unless the user asks for a full redesign.
-- Use draw.io for semantic structure; use GPT-Image-2 for visual style.
+- The draw.io draft itself is the deliverable. Use it for both semantic structure and final visual style; do not defer style to a separate stylization step.
