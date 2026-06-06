@@ -21,6 +21,8 @@ It is meant to enforce execution discipline and strong instruction following. If
 - no silent scope reduction to save tokens
 - completeness by default unless the user explicitly asks for a cheaper or shorter pass
 - prefer local persisted task artifacts over fragile long-conversation memory
+- temp artifacts must stay organized under typed task subfolders instead of piling up in the task root
+- the model should search the current environment for relevant installed skills and call zero, one, or multiple suitable skills when useful
 - maintain source maps and evidence maps rather than leaving only scattered cache files
 - paper reading must include the body, not just abstract/introduction
 - appendix and supplementary material must be checked when present and relevant
@@ -55,27 +57,62 @@ Typical artifacts include:
 - intermediate JSON or Markdown notes
 - audit records
 
-Recommended shape:
+Required shape:
 
 ```text
 <temp-root>/<task-subdir>/
   prompt.txt
+  prompt_history.md
   task_summary.md
+  manifest.json
   local_source_map.md
   local_source_map.json
   evidence_map.md
+  completion_audit.md
   sources/
+    user_files/
+    fetched/
   extracted_text/
+    page_text/
+    ocr/
   renders/
+    pages/
+    verification/
   screenshots/
+    selected/
   search/
+    queries/
+    results/
   notes/
+  scripts/
+  logs/
   audit/
 ```
 
+Only prompt, summary, manifest, source-map, evidence-map, and audit files should live directly under the task subfolder. PDFs, webpages, images, extracted text, helper scripts, logs, and intermediate notes should go into typed subfolders or the closest existing local equivalent.
+
+If an existing task folder is already messy, the skill should stop adding loose files to the root. New artifacts should go into typed subfolders and the existing loose files should be recorded in the source map or manifest. Existing files should not be moved unless the user asks.
+
 If the workspace already has a stronger local convention, the skill should reuse it. In your own workspaces this often means reading an existing workspace-level map such as `x_codex/source_map.json` first, then maintaining a task-local `local_source_map` or `evidence_map` inside the current `x_temp_codex/`, `x_temp/`, or similar temp task folder.
 
-For follow-up turns, MiniMax M3 should look for the existing task subfolder first and continue from those local artifacts instead of relying only on compressed conversation context.
+For follow-up turns, MiniMax M3 should look for the existing task subfolder first, read the saved prompt history, task summary, manifest, source maps, evidence maps, rendered pages, downloaded files, extracted text, screenshots, notes, and audit artifacts, then continue from those local artifacts instead of relying only on compressed conversation context.
+
+When the answer depends on visual content, MiniMax M3 should re-open the relevant rendered pages or images before making new claims or choosing screenshots.
+
+## Skill Search And Delegation
+
+Before generic shell commands, direct downloads, ad-hoc scripts, or manual search, MiniMax M3 should search the current environment for relevant installed skills, plugins, or specialized workflows.
+
+Rules:
+
+- use direct fallback only when no relevant skill exists
+- call one relevant skill when one clearly matches
+- call multiple relevant skills when the task benefits from combining them
+- do not assume only one skill may apply
+- do not commit to a generic workflow before checking the local skill environment
+- do not skip skill discovery merely because `wget`, `curl`, or manual search seems shorter
+
+This is execution routing only. It does not authorize prompt rewriting or task reinterpretation.
 
 ## Source Maps
 
@@ -129,7 +166,10 @@ This skill requires a short audit block in the final answer:
 Completion audit:
 - Prompt obedience: checked | blocked
 - Scope: checked | narrowed | blocked
+- Skill search and delegation: checked | not applicable | blocked
+- Temp artifact layout: checked | blocked
 - Source map: checked | not applicable | blocked
+- Local artifact re-read: checked | not applicable | blocked
 - Body/appendix/supplement: checked | not applicable | blocked
 - Visual verification: checked | not applicable | blocked
 - Search and links: checked | not applicable | blocked

@@ -21,6 +21,8 @@
 - 不允许为了省 token 悄悄缩 scope
 - 除非用户明确要求更便宜、更短或部分执行，否则默认优先完成度
 - 优先依赖本地落盘的任务工件，而不是脆弱的长对话记忆
+- temp 工件必须按类型放入任务子目录，不能堆在任务根目录
+- 模型应该搜索当前环境中的可用 skill，并在有帮助时调用零个、一个或多个合适 skill
 - 维护 source map 和 evidence map，而不是只留下零散缓存文件
 - 读论文时必须读正文，不能只看 abstract/introduction
 - 存在且相关时，必须检查 appendix 和 supplementary material
@@ -55,27 +57,62 @@
 - 中间 JSON 或 Markdown 笔记
 - 审计记录
 
-推荐目录结构：
+强制目录结构：
 
 ```text
 <temp-root>/<task-subdir>/
   prompt.txt
+  prompt_history.md
   task_summary.md
+  manifest.json
   local_source_map.md
   local_source_map.json
   evidence_map.md
+  completion_audit.md
   sources/
+    user_files/
+    fetched/
   extracted_text/
+    page_text/
+    ocr/
   renders/
+    pages/
+    verification/
   screenshots/
+    selected/
   search/
+    queries/
+    results/
   notes/
+  scripts/
+  logs/
   audit/
 ```
 
+只有 prompt、summary、manifest、source map、evidence map 和 audit 文件应该直接放在任务子目录根部。PDF、网页、图片、抽取文本、临时脚本、日志和中间笔记应该进入类型化子目录，或本地已有约定中最接近的等价目录。
+
+如果已有任务目录已经很乱，这个 skill 应该停止继续往根目录扔零散文件。新工件应该放进类型化子目录，已有散落文件应该记录进 source map 或 manifest。除非用户要求，不要移动已有文件。
+
 如果工作区里已经有更强的本地约定，这个 skill 应该直接复用。例如在你的工作区里，常见做法是先读取工作区级的 `x_codex/source_map.json`，再在当前 `x_temp_codex/`、`x_temp/` 或类似 temp task 子目录里维护 `local_source_map` 或 `evidence_map`。
 
-后续追问时，MiniMax M3 应该优先查找这个已有的任务子目录，并从本地工件继续，而不是只依赖已经压缩或漂移的对话上下文。
+后续追问时，MiniMax M3 应该优先查找这个已有的任务子目录，读取保存下来的 prompt history、task summary、manifest、source maps、evidence maps、rendered pages、下载文件、抽取文本、screenshots、notes 和 audit artifacts，再从这些本地工件继续，而不是只依赖已经压缩或漂移的对话上下文。
+
+当答案依赖视觉内容时，MiniMax M3 应该重新打开相关渲染页面或图片，再做新的判断或选择截图。
+
+## Skill 搜索与调用
+
+在使用通用 shell 命令、直接下载、临时脚本或手动搜索之前，MiniMax M3 应该先搜索当前环境中的可用 skill、plugin 或专用工作流。
+
+规则：
+
+- 只有在没有相关 skill 时，才直接走通用 fallback
+- 如果只有一个明显相关的 skill，就调用它
+- 如果任务适合组合能力，就调用多个相关 skill
+- 不要默认任务只能调用一个 skill
+- 不要在检查本地 skill 环境之前就预设通用工作流
+- 不要因为 `wget`、`curl` 或手动搜索更短，就跳过 skill 搜索
+
+这只是执行路由规则，不授权改写 prompt 或重新解释任务。
 
 ## Source Map
 
@@ -129,7 +166,10 @@ Use $minimax-thorough-execution on this prompt:
 Completion audit:
 - Prompt obedience: checked | blocked
 - Scope: checked | narrowed | blocked
+- Skill search and delegation: checked | not applicable | blocked
+- Temp artifact layout: checked | blocked
 - Source map: checked | not applicable | blocked
+- Local artifact re-read: checked | not applicable | blocked
 - Body/appendix/supplement: checked | not applicable | blocked
 - Visual verification: checked | not applicable | blocked
 - Search and links: checked | not applicable | blocked

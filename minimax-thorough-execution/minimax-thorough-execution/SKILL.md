@@ -1,6 +1,6 @@
 ---
 name: minimax-thorough-execution
-description: Strict execution protocol for MiniMax-style agent use when the user wants strong instruction following. Use when the main risks are prompt rewriting, silent scope reduction, token-saving shortcuts, shallow paper reading, skipping appendix or supplementary material, choosing screenshots from captions instead of inspecting rendered pages, shallow search, or failing to return source links. This skill treats the user's prompt as authoritative, forbids prompt rewriting during execution, enforces full-scope work, and requires a final completion audit before answering.
+description: Strict execution protocol for MiniMax-style agent use when the user wants strong instruction following. Use when the main risks are prompt rewriting, silent scope reduction, token-saving shortcuts, shallow paper reading, skipping appendix or supplementary material, choosing screenshots from captions instead of inspecting rendered pages, shallow search, failing to search for and call relevant installed skills, or failing to return source links. This skill treats the user's prompt as authoritative, forbids prompt rewriting during execution, enforces full-scope work, and requires a final completion audit before answering.
 ---
 
 # MiniMax Thorough Execution
@@ -45,6 +45,7 @@ Rules:
 - If something cannot be completed, say exactly what is blocked instead of pretending the reduced result is complete.
 - Preserve the user's prompt exactly during execution.
 - Prefer local persisted task artifacts over fragile long-conversation memory when the task spans multiple turns.
+- Search for relevant installed skills before defaulting to generic shell commands, ad-hoc scripts, or manual search.
 
 ## Hard Rules
 
@@ -139,25 +140,39 @@ Persist important execution artifacts there. At minimum, when applicable, save:
 - search notes, result links, and source snapshots
 - intermediate JSON, markdown notes, and audit records
 
-Recommended structure:
+Required task layout:
 
 ```text
 <temp-root>/<task-subdir>/
   prompt.txt
   prompt_history.md
   task_summary.md
+  manifest.json
   local_source_map.md
   local_source_map.json
   evidence_map.md
+  completion_audit.md
   sources/
+    user_files/
+    fetched/
   extracted_text/
-  cache/
+    page_text/
+    ocr/
   renders/
+    pages/
+    verification/
   screenshots/
+    selected/
   search/
+    queries/
+    results/
   notes/
+  scripts/
+  logs/
   audit/
 ```
+
+Only prompt, summary, manifest, source-map, evidence-map, and audit files may live directly under the task subfolder. Put PDFs, webpages, images, extracted text, helper scripts, logs, and intermediate notes into typed subfolders or the closest existing local equivalent.
 
 If the workspace already has a stronger local convention, reuse it instead of forcing the structure above. Common reusable patterns include:
 
@@ -167,9 +182,28 @@ If the workspace already has a stronger local convention, reuse it instead of fo
 - `notes/`, `web_notes/`, `research_log.md`, `round_log.md`, or `current_task.md` for continuation state
 - `local_source_map*.md`, `source_map*.json`, `evidence_map*.md`, `manifest.json`, or `file_inventory.jsonl` for source-tracking artifacts
 
+If an existing task folder is already messy, stop adding loose files to the root. Put all new artifacts into typed subfolders and record existing loose files in the source map or manifest. Do not move or rename existing files unless the user asks.
+
 If the user specifies another output location, follow that instruction, but still keep enough local continuation artifacts to resume the task reliably across later turns unless the user forbids it.
 
-### 3. Maintain source maps, not just raw cache files
+### 3. Search for and call relevant installed skills before ad-hoc execution
+
+These rules constrain execution mechanics only. They do not authorize rewriting, optimizing, narrowing, broadening, or reinterpreting the user's prompt.
+
+Before using generic shell commands, direct downloads, ad-hoc scripts, or manual web search, inspect the current environment for relevant installed skills, plugins, or specialized workflows.
+
+Rules:
+
+- search the currently available skills first when the task involves retrieval, downloading, reading, research, parsing, browser work, document handling, spreadsheets, presentations, diagrams, images, or other specialized workflows
+- if no relevant skill exists, continue with the best direct fallback
+- if one relevant skill exists, use it
+- if multiple relevant skills exist, use one or more of them when they materially improve execution fidelity or coverage
+- do not assume only one skill may apply to the task
+- do not precommit to a single generic workflow before checking whether better local skills already exist
+- do not replace a relevant installed skill with `wget`, `curl`, one-off scripts, or shallow manual search merely because those are faster or shorter
+- if a relevant skill is unavailable, insufficient, or fails, note that briefly in task notes or the completion audit and then use a direct fallback
+
+### 4. Maintain source maps, not just raw cache files
 
 MiniMax-style execution should not leave behind only scattered PDFs, txt files, images, and JSON blobs. It should also maintain a source map.
 
@@ -212,7 +246,7 @@ Important boundary:
 - source maps are not final evidence by themselves
 - when writing the actual answer, claims must still be grounded in original papers, original pages, original rendered images, or original web sources rather than treated as proven only because the source map mentions them
 
-### 4. Scope may not be silently reduced
+### 5. Scope may not be silently reduced
 
 Treat the user's prompt as the execution contract.
 
@@ -225,7 +259,7 @@ That means:
 
 If the task must be narrowed for any reason, say so explicitly and state what remains uncompleted.
 
-### 5. Completion is the default, not token minimization
+### 6. Completion is the default, not token minimization
 
 Unless the user explicitly asks for brevity, low cost, or a partial pass:
 
@@ -242,7 +276,7 @@ Never use phrases like these as a hidden operating policy:
 
 Those are common failure modes for this model family and are forbidden unless the user directly asks for that tradeoff.
 
-### 6. Paper-reading tasks must include the body, not just the front matter
+### 7. Paper-reading tasks must include the body, not just the front matter
 
 If the user asks to read, explain, analyze, compare, summarize, audit, or extract from a paper:
 
@@ -265,7 +299,7 @@ For paper tasks, do not treat the main paper as complete if a supplied appendix 
 
 If such material exists, incorporate it where relevant instead of silently omitting it.
 
-### 7. Page and screenshot tasks must use rendered visual inspection
+### 8. Page and screenshot tasks must use rendered visual inspection
 
 For tasks involving:
 
@@ -291,10 +325,11 @@ Required behavior:
 - inspect the visual contents directly
 - confirm that the screenshot actually shows the intended figure, table, page region, or evidence
 - if multiple candidate pages exist, inspect them rather than guessing
+- on follow-up turns or later decision points, re-open the relevant rendered image instead of relying only on an earlier text note or summary
 
 If rendered content and extracted text disagree, prefer the rendered content and note the mismatch.
 
-### 8. Search tasks must return original links
+### 9. Search tasks must return original links
 
 If the task requires search, current facts, external grounding, or source-backed explanation:
 
@@ -305,7 +340,7 @@ If the task requires search, current facts, external grounding, or source-backed
 
 If the user explicitly says not to browse, obey that instruction. Otherwise, when search is needed for a complete answer, perform it.
 
-### 9. Search-based claims must be tied to sources
+### 10. Search-based claims must be tied to sources
 
 When you use searched information:
 
@@ -321,13 +356,14 @@ Preferred source order:
 - first-party product or project pages
 - reputable secondary sources only when primary material is unavailable
 
-### 10. Reuse persisted artifacts on follow-up turns
+### 11. Reuse persisted artifacts on follow-up turns
 
 When the conversation continues across multiple turns:
 
 - first look for the existing task-specific temp subfolder
 - identify it by matching the task topic, paper set, output target, naming pattern, and recent timestamps
-- read the saved prompt, prompt history, task summary, current task notes, source maps, evidence maps, rendered pages, downloaded sources, extracted text, search notes, screenshots, and audit artifacts when they are still relevant
+- read the saved prompt, prompt history, task summary, manifest, current task notes, source maps, evidence maps, rendered pages, downloaded sources, extracted text, search notes, screenshots, and audit artifacts when they are still relevant
+- re-open relevant rendered pages or images before making new visual claims, selecting screenshots, or answering image-dependent follow-up questions
 - refresh or extend those artifacts when the follow-up question needs more evidence
 - do not rely only on compressed chat history or partial earlier summaries if the local artifacts are available
 - after each substantial follow-up, append the new task prompt or save a numbered follow-up prompt file so later turns can reconstruct the execution path without depending on chat memory
@@ -335,7 +371,7 @@ When the conversation continues across multiple turns:
 
 If the task has materially changed, create a new task subfolder or a clearly named child run folder under the same task root rather than overwriting unrelated artifacts.
 
-### 11. Perform a completion audit before answering
+### 12. Perform a completion audit before answering
 
 Before presenting the task as complete, run a final audit against the request.
 
@@ -343,6 +379,9 @@ Check at minimum:
 
 - Did I preserve the user's prompt without rewriting or re-scoping it?
 - Did I silently reduce the scope?
+- Did I search the current environment for relevant installed skills before defaulting to generic commands?
+- Did I call one or more relevant skills when they were available and useful?
+- Did I keep new artifacts under the required temp layout instead of scattering files in the task root?
 - Did I read the body, not just the abstract or introduction?
 - Did I inspect appendix and supplementary material when present and relevant?
 - Did I inspect rendered pages or images when the task depended on visual content?
@@ -355,7 +394,7 @@ Check at minimum:
 
 If the audit finds a gap, resolve the gap before answering. If the gap cannot be resolved, state it explicitly.
 
-### 12. Expose a short audit result in the final answer
+### 13. Expose a short audit result in the final answer
 
 After the main answer, include a short visible audit block.
 
@@ -365,7 +404,10 @@ Default format:
 Completion audit:
 - Prompt obedience: checked | blocked
 - Scope: checked | narrowed | blocked
+- Skill search and delegation: checked | not applicable | blocked
+- Temp artifact layout: checked | blocked
 - Source map: checked | not applicable | blocked
+- Local artifact re-read: checked | not applicable | blocked
 - Body/appendix/supplement: checked | not applicable | blocked
 - Visual verification: checked | not applicable | blocked
 - Search and links: checked | not applicable | blocked
@@ -387,10 +429,12 @@ Use the following behavior:
 2. Find or create a local temp root and task-specific subfolder.
 3. Read any existing workspace-level or task-level source maps that matter.
 4. Save the exact prompt locally before substantial execution.
-5. Execute the full requested scope.
-6. Verify hard parts instead of assuming them.
-7. Update the source map and save reusable artifacts for follow-up turns.
-8. Audit for omissions before finalizing.
+5. Search the current environment for relevant installed skills, plugins, or specialized workflows.
+6. Execute the full requested scope using zero, one, or multiple relevant skills when useful.
+7. Save all new artifacts under the required typed task layout.
+8. Verify hard parts instead of assuming them.
+9. Update the source map and save reusable artifacts for follow-up turns.
+10. Audit for omissions before finalizing.
 
 Do not convert this into a visible multi-step planning ritual unless the user asked for one.
 
