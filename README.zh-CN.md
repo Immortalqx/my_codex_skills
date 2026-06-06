@@ -20,6 +20,7 @@
 | [`minimax-thorough-execution`](./minimax-thorough-execution/) | 面向 Codex Desktop App 中 MiniMax M3 的严格执行协议。它禁止执行时改写 prompt，禁止为了省 token 悄悄缩 scope，要求截图/逐页任务基于渲染图做核验，要求搜索返回原始链接，维护 source map，并在最终答案里附一个简短的 completion audit。 | 当主要风险是乱改 prompt、偷懒、跳过正文或补充材料、少看图、少搜索、不贴链接时使用。 | [`minimax-thorough-execution/minimax-thorough-execution`](./minimax-thorough-execution/minimax-thorough-execution/) |
 | [`mock-review`](./mock-review/) | 给论文作者使用的模拟审稿工具；按指定会议或期刊调研官方要求，检查稿件 PDF 材料风险，调研相关文献和实验对比，并生成用于准备 rebuttal、发现论文风险和改进论文的模拟审稿意见。 | 投稿前风险排查、rebuttal 准备、论文修改前的 reviewer-style critique。 | [`mock-review/mock-review`](./mock-review/mock-review/) |
 | [`research-survey-loop`](./research-survey-loop/) | 长周期文献综述工作流；创建或继续综述任务，维护 `task.md`、`round_log.md`、`current_task.md` 和 `survey.md`，按来源优先级搜索论文，迁移本地 PDF，并逐轮扩展中文综述。 | 机器人、具身智能、计算机视觉、世界模型、导航、操作、3D 感知等方向的持续文献调研。 | [`research-survey-loop/research-survey-loop`](./research-survey-loop/research-survey-loop/) |
+| [`update-source-map`](./update-source-map/) | 为任意项目目录创建或更新一份 agent 可读的 source map（Markdown + JSON）。自动检测是该新建还是刷新，并跨更新保留手写的 per-file 摘要。 | 处理新 / 不熟悉的 workspace；为多轮任务准备上下文；把项目交给另一个 agent 时。 | [`update-source-map/update-source-map`](./update-source-map/update-source-map/) |
 
 ## 安装
 
@@ -40,6 +41,9 @@ Copy-Item -Recurse -Force .\mock-review\mock-review "$env:USERPROFILE\.codex\ski
 
 # 安装 research-survey-loop
 Copy-Item -Recurse -Force .\research-survey-loop\research-survey-loop "$env:USERPROFILE\.codex\skills\research-survey-loop"
+
+# 安装 update-source-map
+Copy-Item -Recurse -Force .\update-source-map\update-source-map "$env:USERPROFILE\.codex\skills\update-source-map"
 ```
 
 如果你设置了 `CODEX_HOME`，也可以复制到 `$env:CODEX_HOME\skills\`。

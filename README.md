@@ -20,6 +20,7 @@ Two of the skills in this repository are specifically tuned for **MiniMax M3 use
 | [`minimax-thorough-execution`](./minimax-thorough-execution/) | Strict-execution protocol tuned for MiniMax M3 in Codex Desktop App. It forbids prompt rewriting during execution, prevents token-saving scope shrinkage, requires real visual inspection for screenshot/page tasks, requires source links for search-backed claims, maintains source maps, and appends a short completion audit. | When the main risks are prompt rewriting, laziness, skipped appendix/supplement, shallow search, image avoidance, or missing source grounding. | [`minimax-thorough-execution/minimax-thorough-execution`](./minimax-thorough-execution/minimax-thorough-execution/) |
 | [`mock-review`](./mock-review/) | Mock peer-review workflow for manuscript authors. It researches venue or journal requirements, inspects manuscript PDFs, studies related literature and experimental baselines, and writes a simulated review for rebuttal preparation and paper improvement. | Pre-submission risk check, rebuttal preparation, reviewer-style critique before revising a manuscript. | [`mock-review/mock-review`](./mock-review/mock-review/) |
 | [`research-survey-loop`](./research-survey-loop/) | Long-running literature survey workflow. It creates or resumes survey tasks, maintains stable task documents, searches prioritized sources, migrates local PDFs, reads papers in chunks, and incrementally writes a Chinese survey. | Sustained literature surveys for robotics, embodied AI, computer vision, world models, navigation, manipulation, 3D perception, and adjacent topics. | [`research-survey-loop/research-survey-loop`](./research-survey-loop/research-survey-loop/) |
+| [`update-source-map`](./update-source-map/) | Create or update an agent-readable source map (Markdown + JSON) for any project directory. It auto-detects whether to build a new map or refresh an existing one, and preserves hand-curated per-file summaries across regenerations. | When starting work in a new / unfamiliar workspace, refreshing a stale index after files change, or handing a project over to another agent. | [`update-source-map/update-source-map`](./update-source-map/update-source-map/) |
 
 ## Install
 
@@ -40,6 +41,9 @@ Copy-Item -Recurse -Force .\mock-review\mock-review "$env:USERPROFILE\.codex\ski
 
 # Install research-survey-loop
 Copy-Item -Recurse -Force .\research-survey-loop\research-survey-loop "$env:USERPROFILE\.codex\skills\research-survey-loop"
+
+# Install update-source-map
+Copy-Item -Recurse -Force .\update-source-map\update-source-map "$env:USERPROFILE\.codex\skills\update-source-map"
 ```
 
 If `CODEX_HOME` is configured, copy the folders into `$env:CODEX_HOME\skills\` instead.
