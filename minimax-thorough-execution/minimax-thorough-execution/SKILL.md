@@ -83,7 +83,6 @@ Directory names vary across workspaces. Common examples include:
 - `temp_codex`
 - `temp`
 - `tmp`
-- `x_codex`
 - `codex_temp`
 - `.temp`
 
@@ -94,7 +93,7 @@ The exact name is not fixed. Choose the existing directory that is most clearly 
 When multiple candidates exist, prefer in this order:
 
 1. an existing temp root already used for similar tasks in the same workspace subtree
-2. a root whose name strongly suggests Codex or agent temporary work, such as `x_temp_codex`, `temp_codex`, `x_temp`, or `x_codex`
+2. a root whose name strongly suggests Codex or agent temporary work, such as `x_temp_codex`, `temp_codex`, or `x_temp`
 3. a generic temp root
 
 Avoid choosing leaf artifact folders such as these as the task root:
@@ -385,9 +384,9 @@ Rules:
 Use the following behavior:
 
 1. Read the user's prompt literally.
-2. Save the exact prompt locally before substantial execution.
-3. Find or create a local temp root and task-specific subfolder.
-4. Read any existing workspace-level or task-level source maps that matter.
+2. Find or create a local temp root and task-specific subfolder.
+3. Read any existing workspace-level or task-level source maps that matter.
+4. Save the exact prompt locally before substantial execution.
 5. Execute the full requested scope.
 6. Verify hard parts instead of assuming them.
 7. Update the source map and save reusable artifacts for follow-up turns.

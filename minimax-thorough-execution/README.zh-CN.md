@@ -35,10 +35,11 @@
 
 在开始实质执行前，它应该：
 
-1. 先在工作区里查找已有的 temp 类目录，例如 `x_temp_codex`、`x_temp`、`temp_codex`、`temp`、`tmp`、`x_codex`、`codex_temp`、`.temp`
+1. 先在工作区里查找已有的 temp 类目录，例如 `x_temp_codex`、`x_temp`、`temp_codex`、`temp`、`tmp`、`codex_temp`、`.temp`
 2. 如果没有合适目录，就按本地命名风格创建新的 temp 根目录；如果工作区明显在用 `x_*` 工具目录，则优先创建 `x_temp_codex/`，否则创建 `temp_codex/`
 3. 在该 temp 根目录下按任务创建或复用子目录
-4. 把用户原始 prompt 和可复用的中间工件保存进去
+4. 读取已有的工作区级或任务级 source map
+5. 把用户原始 prompt 和可复用的中间工件保存进去
 
 典型工件包括：
 

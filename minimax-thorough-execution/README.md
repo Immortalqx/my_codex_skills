@@ -35,10 +35,11 @@ This skill now assumes that reliable multi-turn work should be grounded in local
 
 Before substantial execution, it should:
 
-1. look for an existing temp-like working root in the workspace, such as `x_temp_codex`, `x_temp`, `temp_codex`, `temp`, `tmp`, `x_codex`, `codex_temp`, or `.temp`
+1. look for an existing temp-like working root in the workspace, such as `x_temp_codex`, `x_temp`, `temp_codex`, `temp`, `tmp`, `codex_temp`, or `.temp`
 2. if none exists, create a new temp root that matches local naming style; prefer `x_temp_codex/` when the workspace already uses `x_*` utility folders, otherwise use `temp_codex/`
 3. create or reuse a task-specific subfolder under that temp root
-4. save the exact user prompt and reusable intermediate artifacts there
+4. read any existing workspace-level or task-level source maps that matter
+5. save the exact user prompt and reusable intermediate artifacts there
 
 Typical artifacts include:
 
