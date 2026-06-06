@@ -4,26 +4,98 @@
 
 `minimax_thorough_execution` 是一个专门为 **Codex Desktop App 中的 MiniMax M3** 调过的 Codex skill 仓库。
 
-它是 prompt 已经清晰之后使用的执行层。这个 skill 的目标是压制 MiniMax 常见的捷径行为，比如为了省 token 悄悄缩小任务范围、只读 abstract 和 introduction、跳过 appendix 或 supplementary material、不认真做视觉核验、浅搜索，以及搜完不给原始链接。
+它是一个**严格按用户 prompt 干活**的执行层。这个 skill 的目标是压制 MiniMax 常见的失败模式，比如擅自改写任务、为了省 token 悄悄缩小任务范围、只读 abstract 和 introduction、跳过 appendix 或 supplementary material、不认真做视觉核验、浅搜索，以及搜完不给原始链接。
 
 真正可安装的 skill 位于 [minimax-thorough-execution/](./minimax-thorough-execution/)。
 
 ## 重要边界
 
-这个 skill 默认 prompt 已经是清晰的。
+这个 skill 不负责澄清、评价、优化或改写 prompt。
 
-它负责强化执行纪律，不负责做 prompt 澄清。正常工作流里，如果请求本身还有歧义，应该先用 [`minimax-task-preflight`](../minimax-task-preflight/)。
+它负责强化执行纪律和指令遵守。如果你想先单独做一轮澄清，可以先用 [`minimax-task-preflight`](../minimax-task-preflight/)，但这个 skill 自己仍然必须按 prompt 原样执行，不能再次改写。
 
 ## 它强制的内容
 
+- 严格服从用户 prompt
+- 执行阶段不允许改写、优化或悄悄重解释 prompt
 - 不允许为了省 token 悄悄缩 scope
 - 除非用户明确要求更便宜、更短或部分执行，否则默认优先完成度
+- 优先依赖本地落盘的任务工件，而不是脆弱的长对话记忆
+- 维护 source map 和 evidence map，而不是只留下零散缓存文件
 - 读论文时必须读正文，不能只看 abstract/introduction
 - 存在且相关时，必须检查 appendix 和 supplementary material
 - 截图和逐页任务必须基于渲染后的页面做视觉核验，不能只靠 caption 猜测或只看 OCR/抽取文本
 - 需要搜索支撑的回答必须返回原始链接
 - 搜索得到的结论必须绑定来源
 - 最终答案必须附一个简短的 `Completion audit`
+
+## 本地 Temp 缓存
+
+这个 skill 现在默认认为：只靠聊天上下文不够稳，多轮任务应该尽量依赖本地落盘工件续跑。
+
+在开始实质执行前，它应该：
+
+1. 先在工作区里查找已有的 temp 类目录，例如 `x_temp_codex`、`x_temp`、`temp_codex`、`temp`、`tmp`、`x_codex`、`codex_temp`、`.temp`
+2. 如果没有合适目录，就按本地命名风格创建新的 temp 根目录；如果工作区明显在用 `x_*` 工具目录，则优先创建 `x_temp_codex/`，否则创建 `temp_codex/`
+3. 在该 temp 根目录下按任务创建或复用子目录
+4. 把用户原始 prompt 和可复用的中间工件保存进去
+
+典型工件包括：
+
+- `prompt.txt`
+- `task_summary.md`
+- `local_source_map.md` / `local_source_map.json`
+- `evidence_map.md`
+- 下载的论文和源文件
+- 抽取文本或 scan 输出
+- PDF 或幻灯片的渲染图片
+- 截图结果
+- 搜索笔记和原始链接
+- 中间 JSON 或 Markdown 笔记
+- 审计记录
+
+推荐目录结构：
+
+```text
+<temp-root>/<task-subdir>/
+  prompt.txt
+  task_summary.md
+  local_source_map.md
+  local_source_map.json
+  evidence_map.md
+  sources/
+  extracted_text/
+  renders/
+  screenshots/
+  search/
+  notes/
+  audit/
+```
+
+如果工作区里已经有更强的本地约定，这个 skill 应该直接复用。例如在你的工作区里，常见做法是先读取工作区级的 `x_codex/source_map.json`，再在当前 `x_temp_codex/`、`x_temp/` 或类似 temp task 子目录里维护 `local_source_map` 或 `evidence_map`。
+
+后续追问时，MiniMax M3 应该优先查找这个已有的任务子目录，并从本地工件继续，而不是只依赖已经压缩或漂移的对话上下文。
+
+## Source Map
+
+这个 skill 现在把 `source map` 维护视为执行协议的一部分。
+
+也就是说，MiniMax M3 应该：
+
+- 先查找已有的工作区级 source-tracking 文件，例如 `x_codex/source_map.json`、`manifest.json`、`file_inventory.jsonl`
+- 再查找任务级 map，例如 `local_source_map*.md`、`source_map*.json`、`evidence_map*.md`
+- 当引入新的 PDF、网页、截图、抽取文本或派生笔记时，持续更新这些 map
+
+一个合格的 source map 至少应记录：
+
+- 本地路径
+- 原始 URL 或来源描述
+- source 类型
+- 在当前任务中的角色，例如 primary evidence、supplementary evidence、candidate source、cache only
+- 阅读状态
+- 该文件是原始证据还是派生工件
+
+source map 只是组织和续跑工具，本身不能替代最终证据。
 
 ## 快速开始
 
@@ -33,10 +105,10 @@
 cp -R minimax-thorough-execution "$CODEX_HOME/skills/"
 ```
 
-然后让 Codex 对一条已经清晰的 prompt 使用 `$minimax-thorough-execution`：
+然后让 Codex 对用户给出的 prompt 使用 `$minimax-thorough-execution`：
 
 ```text
-Use $minimax-thorough-execution to execute this already-clear prompt thoroughly, without silently shrinking scope, skipping appendix or supplement, guessing from text instead of inspecting images, or omitting source links.
+Use $minimax-thorough-execution to execute my prompt exactly as written, without rewriting it, silently shrinking scope, skipping appendix or supplement, guessing from text instead of inspecting images, or omitting source links.
 ```
 
 ## 典型用法
@@ -44,7 +116,7 @@ Use $minimax-thorough-execution to execute this already-clear prompt thoroughly,
 示例：
 
 ```text
-Use $minimax-thorough-execution on this clarified prompt:
+Use $minimax-thorough-execution on this prompt:
 "Read paper.pdf carefully, including any appendix or supplementary PDF in the workspace. Explain the method and experiments in Chinese, and if you cite any current external facts, search for them and return the original links."
 ```
 
@@ -54,7 +126,9 @@ Use $minimax-thorough-execution on this clarified prompt:
 
 ```text
 Completion audit:
+- Prompt obedience: checked | blocked
 - Scope: checked | narrowed | blocked
+- Source map: checked | not applicable | blocked
 - Body/appendix/supplement: checked | not applicable | blocked
 - Visual verification: checked | not applicable | blocked
 - Search and links: checked | not applicable | blocked
@@ -62,13 +136,15 @@ Completion audit:
 
 这个审计块故意做得很短。目的不是增加格式负担，而是强迫 MiniMax M3 把关键检查是否真的完成暴露出来，而不是悄悄默认自己已经做了。
 
+如果合适，最终答案里也可以顺手提一句本地工件目录，方便下一轮继续。
+
 ## 推荐搭配
 
 推荐顺序：
 
 1. 先运行 [`$minimax-task-preflight`](../minimax-task-preflight/)
 2. 如果它提出追问，就先回答追问
-3. 再对澄清后的 prompt 使用 `$minimax-thorough-execution`
+3. 再把得到的 prompt 原样交给 `$minimax-thorough-execution`
 
 ## 仓库结构
 

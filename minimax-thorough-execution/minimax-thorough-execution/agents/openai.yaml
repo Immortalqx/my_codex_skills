@@ -1,7 +1,7 @@
 interface:
   display_name: "MiniMax Thorough Execution"
-  short_description: "Execute a clear prompt thoroughly without shrinking scope, skipping visuals, or dropping source links"
-  default_prompt: "Use $minimax-thorough-execution to execute this already-clear prompt thoroughly, without silently shrinking scope, skipping appendix or supplement, guessing from text instead of inspecting images, or omitting source links."
+  short_description: "Execute the user's prompt strictly without shrinking scope, skipping visuals, or dropping source links"
+  default_prompt: "Use $minimax-thorough-execution to execute my prompt exactly as written, without rewriting it, silently shrinking scope, skipping appendix or supplement, guessing from text instead of inspecting images, or omitting source links."
 
 policy:
   allow_implicit_invocation: false
