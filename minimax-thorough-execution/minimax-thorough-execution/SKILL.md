@@ -35,7 +35,9 @@ Rules:
 - if the prompt is unusual but still executable, execute it literally
 - if the prompt has a true blocker that makes execution impossible, report the blocker and ask for clarification instead of rewriting the task
 
-## Core Stance
+Prompt quality is never permission to change the task.
+
+## Core Contract
 
 - The user's explicit instructions take priority over model preferences and default heuristics.
 - Default to completeness over token saving.
@@ -45,148 +47,27 @@ Rules:
 - If something cannot be completed, say exactly what is blocked instead of pretending the reduced result is complete.
 - Preserve the user's prompt exactly during execution.
 - Prefer local persisted task artifacts over fragile long-conversation memory when the task spans multiple turns.
-- Search for relevant installed skills before defaulting to generic shell commands, ad-hoc scripts, or manual search.
+- Search the current environment for relevant installed skills before defaulting to generic shell commands, ad-hoc scripts, direct downloads, or manual search.
 
-## Hard Rules
+## Working Cache
 
-### 1. Follow the user's prompt literally and do not rewrite it
+Before substantial execution:
 
-Treat the user's prompt exactly as the execution contract.
+1. identify one existing temp-like working root when possible, or create one that matches the local naming style
+2. create or reuse one task-specific subfolder inside that root
+3. read existing workspace-level or task-level source-tracking artifacts when they matter
+4. save the exact prompt locally
+5. if continuing an existing task, read the prompt history, task summary, manifest, source maps, evidence maps, relevant renders, screenshots, search notes, and audit artifacts before proceeding
 
-That means:
+Rules:
 
-- do not rewrite the prompt
-- do not paraphrase the prompt as a substitute for executing it
-- do not optimize the prompt
-- do not silently reinterpret ambiguous wording into your preferred version
-- do not add hidden deliverables, hidden subtasks, or hidden planning steps
-- do not remove constraints because they seem inconvenient
-- do not replace the task with a cheaper, shorter, cleaner, or more standard version
+- do not scatter one task across multiple temp roots unless the user explicitly asks for that
+- do not use a leaf artifact folder as the task root
+- keep new artifacts under the required typed layout described in [references/temp-layout.md](references/temp-layout.md)
+- if an existing task folder is already messy, stop adding loose files to the root; put new artifacts into typed subfolders and record existing loose files in the manifest or source map
+- do not move or rename existing files unless the user asks
 
-If the prompt is executable, execute it literally.
-
-If the prompt contains a true blocker, do this instead:
-
-- report the blocker concretely
-- state what exact piece of information or artifact is missing or contradictory
-- stop short of rewriting the prompt on the user's behalf
-
-Prompt quality is never permission to change the task.
-
-### 2. Use a local working cache and persist task artifacts
-
-Before substantial execution, identify the workspace's existing temporary working root instead of assuming one fixed directory name.
-
-Directory names vary across workspaces. Common examples include:
-
-- `x_temp_codex`
-- `x_temp`
-- `temp_codex`
-- `temp`
-- `tmp`
-- `codex_temp`
-- `.temp`
-
-Nested roots such as `.../temp_codex/` inside an existing task area are also valid.
-
-The exact name is not fixed. Choose the existing directory that is most clearly intended for Codex-style temporary work.
-
-When multiple candidates exist, prefer in this order:
-
-1. an existing temp root already used for similar tasks in the same workspace subtree
-2. a root whose name strongly suggests Codex or agent temporary work, such as `x_temp_codex`, `temp_codex`, or `x_temp`
-3. a generic temp root
-
-Avoid choosing leaf artifact folders such as these as the task root:
-
-- `cache/`
-- `renders/`
-- `screenshots/`
-- `notes/`
-- `search/`
-- `audit/`
-- `pdf_pages_*`
-- `thumbnails/`
-- `x_temp_user_text/`
-
-When both agent-oriented and user-oriented temp roots exist, prefer the agent-oriented root unless the user says otherwise.
-
-Do not scatter artifacts across multiple temp roots unless the user explicitly asks for that.
-
-If no suitable temp-like directory exists, create one in the workspace. Reuse the local naming style if it is obvious. Otherwise prefer `x_temp_codex/` when the workspace already uses `x_*` utility folders; if not, create `temp_codex/`.
-
-Inside that temp root, create or reuse a task-specific subfolder. The name does not need to follow one fixed convention. Reuse the local pattern when one already exists.
-
-Common task-subfolder patterns include:
-
-- `<topic>`
-- `<topic>_<YYYYMMDD>`
-- `<date>_<task>`
-- `<task>_v02`
-- `<task>_<YYYYMMDD>_v03`
-
-Choose an existing task subfolder when it clearly matches the current task by topic, paper set, output target, or recent related artifacts. If none exists, create one following the local naming style. If no local pattern is visible, default to `<task-slug>_<YYYYMMDD>` and add a version suffix when needed.
-
-Persist important execution artifacts there. At minimum, when applicable, save:
-
-- the exact user prompt or execution contract
-- follow-up prompts or prompt history when the task continues across turns
-- a short task summary for continuation
-- source maps and evidence maps
-- downloaded papers or source files
-- extracted text or page-level text dumps
-- PDF or slide renderings used for visual inspection
-- screenshot outputs
-- search notes, result links, and source snapshots
-- intermediate JSON, markdown notes, and audit records
-
-Required task layout:
-
-```text
-<temp-root>/<task-subdir>/
-  prompt.txt
-  prompt_history.md
-  task_summary.md
-  manifest.json
-  local_source_map.md
-  local_source_map.json
-  evidence_map.md
-  completion_audit.md
-  sources/
-    user_files/
-    fetched/
-  extracted_text/
-    page_text/
-    ocr/
-  renders/
-    pages/
-    verification/
-  screenshots/
-    selected/
-  search/
-    queries/
-    results/
-  notes/
-  scripts/
-  logs/
-  audit/
-```
-
-Only prompt, summary, manifest, source-map, evidence-map, and audit files may live directly under the task subfolder. Put PDFs, webpages, images, extracted text, helper scripts, logs, and intermediate notes into typed subfolders or the closest existing local equivalent.
-
-If the workspace already has a stronger local convention, reuse it instead of forcing the structure above. Common reusable patterns include:
-
-- `sources/`, `external/`, or `downloads/` for fetched files
-- `cache/`, `text_extracts/`, `pdf_text/`, or `selected_text/` for extracted text
-- `pdf_pages_*`, `renders/`, `thumbnails/`, or `verify_thumbs/` for rendered images
-- `notes/`, `web_notes/`, `research_log.md`, `round_log.md`, or `current_task.md` for continuation state
-- `local_source_map*.md`, `source_map*.json`, `evidence_map*.md`, `manifest.json`, or `file_inventory.jsonl` for source-tracking artifacts
-
-If an existing task folder is already messy, stop adding loose files to the root. Put all new artifacts into typed subfolders and record existing loose files in the source map or manifest. Do not move or rename existing files unless the user asks.
-
-If the user specifies another output location, follow that instruction, but still keep enough local continuation artifacts to resume the task reliably across later turns unless the user forbids it.
-
-### 3. Search for and call relevant installed skills before ad-hoc execution
+## Skill Delegation
 
 These rules constrain execution mechanics only. They do not authorize rewriting, optimizing, narrowing, broadening, or reinterpreting the user's prompt.
 
@@ -194,169 +75,54 @@ Before using generic shell commands, direct downloads, ad-hoc scripts, or manual
 
 Rules:
 
-- search the currently available skills first when the task involves retrieval, downloading, reading, research, parsing, browser work, document handling, spreadsheets, presentations, diagrams, images, or other specialized workflows
+- when the task involves retrieval, downloading, reading, research, parsing, browser work, documents, spreadsheets, presentations, diagrams, images, or other specialized workflows, search the currently available skills first
 - if no relevant skill exists, continue with the best direct fallback
-- if one relevant skill exists, use it
+- if one relevant skill exists and covers the needed operation, use it
 - if multiple relevant skills exist, use one or more of them when they materially improve execution fidelity or coverage
 - do not assume only one skill may apply to the task
-- do not precommit to a single generic workflow before checking whether better local skills already exist
+- do not precommit to a generic workflow before checking whether better local skills already exist
 - do not replace a relevant installed skill with `wget`, `curl`, one-off scripts, or shallow manual search merely because those are faster or shorter
 - if a relevant skill is unavailable, insufficient, or fails, note that briefly in task notes or the completion audit and then use a direct fallback
 
-### 4. Maintain source maps, not just raw cache files
+Read [references/skill-discovery.md](references/skill-discovery.md) when deciding how to search for and combine installed skills.
 
-MiniMax-style execution should not leave behind only scattered PDFs, txt files, images, and JSON blobs. It should also maintain a source map.
+## Source Tracking
 
-Look for existing source-tracking artifacts before creating new ones. Common examples include:
-
-- `x_codex/source_map.json`
-- `x_codex/manifest.json`
-- `x_codex/file_inventory.jsonl`
-- task-local `local_source_map*.md`
-- task-local `source_map*.json`
-- task-local `evidence_map*.md`
-
-Use two levels when possible:
-
-1. workspace-level source map or manifest, if one already exists
-2. task-level source map for the current run or task subtree
+Maintain source maps and evidence maps, not just loose cache files.
 
 Rules:
 
-- if a stable workspace-level source map exists, read it early and use it to understand the workspace organization
-- if a task-level source map already exists for the current task, update and extend it instead of starting from scratch
-- if no task-level source map exists, create one
-- if no workspace-level source map exists, do not invent a fake global registry unless the task genuinely needs one; the task-level map is enough
+- read existing workspace-level and task-level source-tracking artifacts early when they exist
+- create or update a task-level source map whenever new PDFs, webpages, screenshots, extracted text, renders, or derived notes are introduced
+- keep an evidence map that links claims or subtasks to concrete sources when the task needs grounding
+- treat source maps as organizational aids, not as final evidence
 
-The task-level source map should record, when applicable:
+Read [references/source-maps.md](references/source-maps.md) when creating or extending source-tracking artifacts.
 
-- local path
-- original source URL or origin description
-- source type, such as PDF, slide, screenshot, webpage, notes, extracted text, or derived artifact
-- relation to the task, such as primary evidence, supplementary evidence, candidate source, cache only, or output support
-- read status, such as queued, skimmed, deeply read, visually verified, or blocked
-- whether the file is original evidence or a derived cache artifact
-- brief notes about why it matters
+## Content Rules
 
-The evidence map should track which claims or subtasks are supported by which sources.
-
-Important boundary:
-
-- source maps are organizational tools and continuation aids
-- source maps are not final evidence by themselves
-- when writing the actual answer, claims must still be grounded in original papers, original pages, original rendered images, or original web sources rather than treated as proven only because the source map mentions them
-
-### 5. Scope may not be silently reduced
-
-Treat the user's prompt as the execution contract.
-
-That means:
-
-- cover all materials the prompt includes
-- cover all sections, pages, files, and modalities the prompt includes
-- do not skip harder parts just because earlier parts seem sufficient
-- do not stop after a partial pass and present it as complete
-
-If the task must be narrowed for any reason, say so explicitly and state what remains uncompleted.
-
-### 6. Completion is the default, not token minimization
-
-Unless the user explicitly asks for brevity, low cost, or a partial pass:
-
-- prioritize doing the full task
-- prioritize reading the required material fully enough to support the answer
-- prioritize verifying evidence instead of guessing
-
-Never use phrases like these as a hidden operating policy:
-
-- "to save tokens"
-- "to keep this lightweight"
-- "this should be enough"
-- "I will only check the main parts"
-
-Those are common failure modes for this model family and are forbidden unless the user directly asks for that tradeoff.
-
-### 7. Paper-reading tasks must include the body, not just the front matter
-
-If the user asks to read, explain, analyze, compare, summarize, audit, or extract from a paper:
+Paper tasks:
 
 - do not stop at the abstract or introduction
 - inspect the main body end to end
 - inspect method, experiments, and conclusion sections when they exist
-- if appendix or supplementary material exists, inspect it too unless the user explicitly excludes it
+- inspect appendix or supplementary material when present unless the user explicitly excludes it
 
-For paper tasks, do not treat the main paper as complete if a supplied appendix or supplement contains any of the following:
+Visual tasks:
 
-- implementation details
-- training details
-- evaluation setup
-- additional results
-- ablations
-- proofs
-- limitations
-- failure cases
-- data details
-
-If such material exists, incorporate it where relevant instead of silently omitting it.
-
-### 8. Page and screenshot tasks must use rendered visual inspection
-
-For tasks involving:
-
-- page-level reading
-- screenshots from PDFs or slides
-- figure inspection
-- chart reading
-- image comparison
-- any request that depends on what a page or image looks like
-
-You must inspect the rendered page or image itself.
-
-Forbidden shortcuts:
-
-- selecting a page only because its caption text matched a keyword
-- relying only on OCR or extracted text
-- inferring the screenshot target from section headings alone
-- taking a screenshot without checking whether the captured image actually contains the requested content
-
-Required behavior:
-
-- render the relevant page or image
-- inspect the visual contents directly
-- confirm that the screenshot actually shows the intended figure, table, page region, or evidence
-- if multiple candidate pages exist, inspect them rather than guessing
+- render the relevant page or image and inspect the visual contents directly
+- do not rely only on captions, OCR, extracted text, or section headings
+- confirm that screenshots actually contain the requested figure, table, page region, or evidence
 - on follow-up turns or later decision points, re-open the relevant rendered image instead of relying only on an earlier text note or summary
 
-If rendered content and extracted text disagree, prefer the rendered content and note the mismatch.
+Search tasks:
 
-### 9. Search tasks must return original links
+- do not rely on memory alone when search is needed for a complete answer
+- inspect the source pages you rely on instead of trusting snippets only
+- return the original links for searched sources
+- bind substantive claims to one or more concrete sources
 
-If the task requires search, current facts, external grounding, or source-backed explanation:
-
-- do not rely on memory alone
-- perform the search carefully
-- open and inspect the relevant result content instead of trusting snippets only
-- return the original links for the sources you relied on
-
-If the user explicitly says not to browse, obey that instruction. Otherwise, when search is needed for a complete answer, perform it.
-
-### 10. Search-based claims must be tied to sources
-
-When you use searched information:
-
-- bind substantive conclusions to one or more concrete sources
-- do not give unsupported summary paragraphs as if they were verified
-- make it clear which source supports which claim when the answer depends on search
-
-Preferred source order:
-
-- official documentation
-- primary sources
-- original papers
-- first-party product or project pages
-- reputable secondary sources only when primary material is unavailable
-
-### 11. Reuse persisted artifacts on follow-up turns
+## Follow-up Turns
 
 When the conversation continues across multiple turns:
 
@@ -371,72 +137,34 @@ When the conversation continues across multiple turns:
 
 If the task has materially changed, create a new task subfolder or a clearly named child run folder under the same task root rather than overwriting unrelated artifacts.
 
-### 12. Perform a completion audit before answering
+## Completion Audit
 
-Before presenting the task as complete, run a final audit against the request.
+Before presenting the task as complete:
 
-Check at minimum:
+- audit prompt obedience and scope completeness
+- audit whether relevant installed skills were searched for and delegated when useful
+- audit whether new artifacts stayed under the required temp layout
+- audit body, appendix, supplement, visual verification, search, and source-link coverage
+- audit whether enough local artifacts were saved for reliable continuation
 
-- Did I preserve the user's prompt without rewriting or re-scoping it?
-- Did I silently reduce the scope?
-- Did I search the current environment for relevant installed skills before defaulting to generic commands?
-- Did I call one or more relevant skills when they were available and useful?
-- Did I keep new artifacts under the required temp layout instead of scattering files in the task root?
-- Did I read the body, not just the abstract or introduction?
-- Did I inspect appendix and supplementary material when present and relevant?
-- Did I inspect rendered pages or images when the task depended on visual content?
-- Did I verify that screenshots actually contain the requested content?
-- Did I search when the task required external grounding?
-- Did I return original links for searched sources?
-- Did I attach claims to sources rather than giving unsupported conclusions?
-- Did I update or create the relevant source map?
-- Did I persist enough task artifacts for a later follow-up turn to resume reliably?
-
-If the audit finds a gap, resolve the gap before answering. If the gap cannot be resolved, state it explicitly.
-
-### 13. Expose a short audit result in the final answer
-
-After the main answer, include a short visible audit block.
-
-Default format:
-
-```text
-Completion audit:
-- Prompt obedience: checked | blocked
-- Scope: checked | narrowed | blocked
-- Skill search and delegation: checked | not applicable | blocked
-- Temp artifact layout: checked | blocked
-- Source map: checked | not applicable | blocked
-- Local artifact re-read: checked | not applicable | blocked
-- Body/appendix/supplement: checked | not applicable | blocked
-- Visual verification: checked | not applicable | blocked
-- Search and links: checked | not applicable | blocked
-```
-
-Rules:
-
-- keep the audit short
-- do not fabricate a `checked` status
-- use `not applicable` when a category truly does not apply
-- use `blocked` when the category could not be completed
-- if the user requires a very strict output shape, compress the audit to one short line instead of omitting it
+Use a short visible audit block in the final answer. Read [references/completion-audit.md](references/completion-audit.md) before finalizing.
 
 ## Execution Pattern
 
 Use the following behavior:
 
 1. Read the user's prompt literally.
-2. Find or create a local temp root and task-specific subfolder.
-3. Read any existing workspace-level or task-level source maps that matter.
+2. Find or create one local temp root and one task-specific subfolder.
+3. Read relevant local task artifacts and source-tracking files.
 4. Save the exact prompt locally before substantial execution.
 5. Search the current environment for relevant installed skills, plugins, or specialized workflows.
 6. Execute the full requested scope using zero, one, or multiple relevant skills when useful.
 7. Save all new artifacts under the required typed task layout.
 8. Verify hard parts instead of assuming them.
-9. Update the source map and save reusable artifacts for follow-up turns.
+9. Update source maps, evidence maps, and reusable continuation artifacts.
 10. Audit for omissions before finalizing.
 
-Do not convert this into a visible multi-step planning ritual unless the user asked for one.
+Do not convert this into a visible planning ritual unless the user asked for one.
 
 ## Failure Handling
 
@@ -452,7 +180,7 @@ Valid blockers include:
 - missing files
 - inaccessible links
 - unreadable pages or corrupted documents
-- unavailable tools
+- unavailable tools or relevant skills
 - explicit user constraints that prevent verification
 - direct contradictions in the prompt that make execution impossible without clarification
 - inability to create or reuse the local task cache when the workspace is read-only or the user forbids local persistence
@@ -469,46 +197,3 @@ Token conservation by itself is not a valid blocker when the user has not asked 
 - Do not add self-congratulatory commentary.
 - Do not add process narration about saving effort or reducing token use.
 - Mention omissions only when they are real and unresolved.
-
-## Examples
-
-### Example 1: forbidden paper shortcut
-
-Forbidden behavior:
-
-```text
-I read the abstract and introduction, which are enough to explain the paper at a high level.
-```
-
-Why forbidden:
-
-- it silently narrows the task
-- it treats early sections as a substitute for the full paper
-
-### Example 2: required supplement behavior
-
-Required behavior:
-
-```text
-The supplement includes implementation details and extra ablations, so I included them in the explanation instead of limiting the answer to the main PDF.
-```
-
-### Example 3: forbidden screenshot shortcut
-
-Forbidden behavior:
-
-```text
-I found the figure caption in the extracted text, so I captured that page without checking the rendered image.
-```
-
-Why forbidden:
-
-- it guesses from text instead of verifying visual content
-
-### Example 4: required search behavior
-
-Required behavior:
-
-```text
-I searched the relevant sources, checked the pages I relied on, and returned the original links for the claims used in the answer.
-```
