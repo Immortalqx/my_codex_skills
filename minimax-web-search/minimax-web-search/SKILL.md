@@ -5,17 +5,11 @@ description: Web search via the upstream minimax-coding-plan-mcp tool, using the
 
 # MiniMax Web Search
 
-This skill lets Codex do web search through the user's MiniMax
-token-plan key, bypassing Codex 0.137.0's broken MCP integration
-([openai/codex#23186](https://github.com/openai/codex/issues/23186)).
+This skill lets Codex do web search through the user's MiniMax token-plan key, bypassing Codex 0.137.0's broken MCP integration ([openai/codex#23186](https://github.com/openai/codex/issues/23186)).
 
 ## When to use
 
-Use this skill when Codex's built-in MCP integration is broken and the
-user wants to search the web (news, latest updates, fact lookup, etc.).
-
-Do **not** use this skill for image understanding (use
-`$minimax-image-understand` instead) or for fetching a specific URL.
+Use this skill when Codex's built-in MCP integration is broken and the user wants to search the web (news, latest updates, fact lookup, etc.).
 
 ## How to invoke
 
@@ -25,28 +19,20 @@ Run the bundled script via `exec_command`:
 python3 <skill-dir>/scripts/search.py "<query>" [--max N] [--timeout S] [--print]
 ```
 
-Where `<skill-dir>` is this skill's install location. The default `--max`
-is 15; the user can override. The script prints results to stdout for
-Codex to read and does not write local result/cache/debug files.
+Where `<skill-dir>` is this skill's install location. The default `--max` is 15; the user can override. The script prints results to stdout for Codex to read and does not write local result/cache/debug files.
 
 ### Bilingual search (recommended for broad coverage)
 
-The upstream search tool returns the most useful results when the query
-matches the language of the corpus. For broad, fast-moving, or
-authoritative-coverage queries, run the script **twice** with the same
-intent in two languages and merge the results:
+The upstream search tool returns the most useful results when the query matches the language of the corpus. For broad, fast-moving, or authoritative-coverage queries, run the script **twice** with the same intent in two languages and merge the results:
 
 1. **English keywords** - the query translated to English (or kept
    as-is if already English).
 2. **Chinese keywords** - the same intent translated to Chinese (or
    kept as-is if already Chinese).
 
-Then dedupe the two result lists by URL, prefer the higher-ranked hit
-when the same URL appears in both, and present the combined set to the
-user.
+Then dedupe the two result lists by URL, prefer the higher-ranked hit when the same URL appears in both, and present the combined set to the user.
 
-Worked example for the user query "what's the latest on AI agents in
-2026":
+Worked example for the user query "what's the latest on AI agents in 2026":
 
 ```bash
 # English pass
@@ -60,15 +46,11 @@ python3 scripts/search.py "AI 智能体 最新进展 2026"
 When to apply:
 
 - **Use bilingual** for broad news, latest trends, multi-source
-  comparison, anything where the user wants comprehensive coverage, and
-  any query whose target audience spans English and Chinese web
-  sources.
+  comparison, anything where the user wants comprehensive coverage, and any query whose target audience spans English and Chinese web sources.
 - **One language is fine** for narrow lookups: a specific API name, a
-  specific error message, a single library, a fixed URL or paper
-  title. Doubling the call would just add noise here.
+  specific error message, a single library, a fixed URL or paper title. Doubling the call would just add noise here.
 
-The translation between English and Chinese is a model-side step - the
-script just forwards whatever query string it is given.
+The translation between English and Chinese is a model-side step - the script just forwards whatever query string it is given.
 
 ## What the output looks like
 
@@ -85,17 +67,14 @@ script just forwards whatever query string it is given.
   status: code=0 msg=success
 ```
 
-The output is stdout only, so Codex receives the search results directly
-and no local result/cache/debug file is created.
+The output is stdout only, so Codex receives the search results directly and no local result/cache/debug file is created.
 
 ## How to present results to the user
 
 1. When you ran bilingual search, dedupe by URL first, then show the
-   combined numbered list (titles + links). If the user wants the
-   snippets included, re-show the wrapper output as-is.
+   combined numbered list (titles + links). If the user wants the snippets included, re-show the wrapper output as-is.
 2. If the user wants more than the default 15 per pass, re-run with
-   `--max N` (cap at 30 - the upstream `web_search` tool itself
-   returns at most ~10-20 organic per query).
+   `--max N` (cap at 30 - the upstream `web_search` tool itself returns at most ~10-20 organic per query).
 3. If the user wants raw data (e.g. all related_searches, base_resp),
    re-run with `--print` to emit the full JSON-RPC response to stdout.
 
@@ -109,13 +88,9 @@ The script auto-discovers the API key from:
 3. `[model_providers.minimax].experimental_bearer_token` in
    `~/.codex/switch_model/minimax/config.toml`
 
-The third location is where Codex persists the token-plan key when
-`switch_model` is configured - it is the most reliable because Codex
-sometimes strips `[mcp_servers.*]` blocks.
+The third location is where Codex persists the token-plan key when `switch_model` is configured - it is the most reliable because Codex sometimes strips `[mcp_servers.*]` blocks.
 
-**You (Codex) do not need to do anything to configure this.** If the user
-has a valid MiniMax token-plan key in any of those locations, the skill
-just works.
+**You (Codex) do not need to do anything to configure this.** If the user has a valid MiniMax token-plan key in any of those locations, the skill just works.
 
 ## Failure modes
 
@@ -128,7 +103,7 @@ just works.
 
 ## When NOT to use this skill
 
-- The user wants to understand an image - use `$minimax-image-understand`
+- The user wants to understand an image - use an image-understanding skill
 - The user wants to fetch and read a specific URL - use `curl` / `wget`
 - The user is in Claude Desktop, Cursor, or any non-Codex client - those
   have working MCP integration; suggest the upstream MCP server instead

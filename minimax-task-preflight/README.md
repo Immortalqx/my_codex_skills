@@ -72,13 +72,13 @@ Read the paper in paper.pdf and explain the method section in Chinese. If the ap
 
 ## Recommended Pairing
 
-This skill is intended to be used before [`minimax-thorough-execution`](../minimax-thorough-execution/).
+This skill is intended to be used before a strict-execution skill (whichever is installed).
 
 Typical sequence:
 
 1. run `$minimax-task-preflight`
 2. answer its follow-up questions if needed
-3. pass the clarified prompt into `$minimax-thorough-execution`
+3. pass the clarified prompt into the strict-execution skill
 
 ## Repository Layout
 

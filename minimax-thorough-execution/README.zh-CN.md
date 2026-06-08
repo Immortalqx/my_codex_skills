@@ -12,7 +12,7 @@
 
 这个 skill 不负责澄清、评价、优化或改写 prompt。
 
-它负责强化执行纪律和指令遵守。如果你想先单独做一轮澄清，可以先用 [`minimax-task-preflight`](../minimax-task-preflight/)，但这个 skill 自己仍然必须按 prompt 原样执行，不能再次改写。
+如果你想先单独做一轮澄清，可以先用 prompt 澄清类的 skill，但这个 skill 自己仍然必须按 prompt 原样执行，不能再次改写。
 
 ## 它强制的内容
 
@@ -183,7 +183,7 @@ Completion audit:
 
 推荐顺序：
 
-1. 先运行 [`$minimax-task-preflight`](../minimax-task-preflight/)
+1. 先运行 prompt 澄清类 skill（如果安装了）
 2. 如果它提出追问，就先回答追问
 3. 再把得到的 prompt 原样交给 `$minimax-thorough-execution`
 

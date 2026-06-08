@@ -1,4 +1,4 @@
 interface:
   display_name: "MiniMax Web Search"
   short_description: "Web search via MiniMax token-plan key (bypasses Codex MCP bug)"
-  default_prompt: "Search the web using minimax-web-search: read ~/.codex/switch_model/minimax/config.toml for the bearer token, call the upstream minimax-coding-plan-mcp, print results to stdout only, and return the top 15 organic results as a numbered list with title, link, and snippet."
+  default_prompt: "Use $minimax-web-search to search the web via the upstream minimax-coding-plan-mcp web_search tool using the user's MiniMax token-plan key, and return the top results as a numbered list with title, link, and snippet."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Help Me Read"
+  short_description: "Deep-read a PDF and write a story-driven close-read note"
+  default_prompt: "Use $help-me-read to deep-read the user-provided PDF, run divergent web search and image-understanding calls, then write a story-driven close-read note to a new versioned file (never overwrite the old one)."

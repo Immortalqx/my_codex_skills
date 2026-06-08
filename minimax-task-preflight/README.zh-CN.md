@@ -72,13 +72,13 @@ Read the paper in paper.pdf and explain the method section in Chinese. If the ap
 
 ## 推荐搭配
 
-这个 skill 设计上就是给 [`minimax-thorough-execution`](../minimax-thorough-execution/) 打前站的。
+这个 skill 设计上就是给严格执行的 skill（看哪个安装了）打前站的。
 
 推荐顺序：
 
 1. 先运行 `$minimax-task-preflight`
 2. 如果它提出追问，就先回答追问
-3. 再把澄清后的 prompt 交给 `$minimax-thorough-execution`
+3. 再把澄清后的 prompt 交给严格执行的 skill
 
 ## 仓库结构
 

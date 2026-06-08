@@ -183,7 +183,7 @@ When useful, the final answer can also mention the local artifact location brief
 
 Typical sequence:
 
-1. run [`$minimax-task-preflight`](../minimax-task-preflight/)
+1. run a prompt-clarification skill first (if installed)
 2. answer the follow-up questions if needed
 3. run `$minimax-thorough-execution` on the resulting prompt without changing it again
 
