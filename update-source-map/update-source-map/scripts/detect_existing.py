@@ -23,6 +23,18 @@ CANDIDATES = [
 ]
 
 
+
+
+# Force UTF-8 on stdout/stderr so non-ASCII paths / content never crash
+# the parent process when this script is invoked via subprocess on
+# Windows code pages like GBK / cp936.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
+
 def detect(workspace_root: str) -> dict:
     """Return detection result as a dict. Always succeeds (returns mode='create' if nothing found)."""
     root = Path(workspace_root).resolve()

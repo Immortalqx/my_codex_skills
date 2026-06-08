@@ -11,6 +11,12 @@ Auto-detection rules (delegated to detect_existing.py):
 1. If <workspace>/x_temp/SOURCE_MAP.md AND <workspace>/x_temp/source_map.json exist → update
 2. If <workspace>/SOURCE_MAP.md AND <workspace>/source_map.json exist → update
 3. Otherwise → create
+
+Encoding safety: all child subprocesses are launched with
+PYTHONIOENCODING=utf-8 + PYTHONUTF8=1, and their stdout is read back as
+UTF-8 with errors="replace". This means non-ASCII workspace paths and
+filenames (Chinese, accents, emoji, etc.) are handled correctly on
+Windows code pages such as GBK / cp936, not just on UTF-8 locales.
 """
 import argparse
 import json
@@ -25,9 +31,41 @@ SCAN = SCRIPT_DIR / "scan_workspace.py"
 BUILD = SCRIPT_DIR / "build_source_map.py"
 
 
+def _utf8_env():
+    """Build an env dict that forces child Python processes to use UTF-8 stdout/stderr.
+
+    Necessary on Windows where the system default code page is GBK / cp936
+    rather than UTF-8, so child scripts that print() non-ASCII (Chinese
+    workspace paths, file names with CJK, etc.) would otherwise emit bytes
+    the parent cannot decode as UTF-8. Setting PYTHONIOENCODING forces the
+    child to use UTF-8 for its standard streams regardless of platform.
+    """
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONUTF8"] = "1"
+    return env
+
+
+# Default kwargs applied to every subprocess.run() call in this file.
+# - text=True so stdout/stderr are strings
+# - encoding="utf-8" so the parent decodes the child's bytes as UTF-8
+#   (matches the child's PYTHONIOENCODING=utf-8 above)
+# - errors="replace" so a stray undecodable byte becomes U+FFFD instead
+#   of crashing the reader thread
+_SUBPROC_DEFAULTS = {"text": True, "encoding": "utf-8", "errors": "replace"}
+
+
 def run(cmd, **kw):
-    """Run a subprocess and return CompletedProcess. Raise on non-zero."""
-    return subprocess.run(cmd, check=True, **kw)
+    """Run a subprocess and return CompletedProcess. Raise on non-zero.
+
+    Applies UTF-8 safe defaults (text/encoding/errors) and the UTF-8 env
+    to every call so non-ASCII paths / outputs never break the parent
+    process. Callers can still override individual kwargs.
+    """
+    merged = {**_SUBPROC_DEFAULTS, **kw}
+    if "env" not in merged:
+        merged["env"] = _utf8_env()
+    return subprocess.run(cmd, check=True, **merged)
 
 
 def main():
@@ -53,10 +91,13 @@ def main():
     inventory_out = os.path.join(output_dir, "file_inventory.jsonl")
     prev_inventory = os.path.join(output_dir, "file_inventory.prev.jsonl")
 
-    # 1) Detect (exit 0 = found, exit 1 = not found — both are normal)
+    # 1) Detect (exit 0 = found, exit 1 = not found — both are normal).
+    # Uses UTF-8 decoding + PYTHONIOENCODING so non-ASCII workspace paths
+    # (Chinese, accents, etc.) do not crash the reader thread.
     result = subprocess.run(
         [sys.executable, str(DETECT), workspace],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        env=_utf8_env(),
     )
     if result.returncode not in (0, 1):
         print(f"detect_existing.py failed (rc={result.returncode}): {result.stderr}", file=sys.stderr)

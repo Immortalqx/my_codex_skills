@@ -23,6 +23,18 @@ DEFAULT_EXCLUDE_DIRS = {"notes.assets", "x_temp", "x_temp_*"}
 DEFAULT_EXTS = {".md", ".pdf"}
 
 
+
+
+# Force UTF-8 on stdout/stderr so non-ASCII paths / content never crash
+# the parent process when this script is invoked via subprocess on
+# Windows code pages like GBK / cp936.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
+
 def is_excluded_dir(name: str, custom_excludes: set) -> bool:
     if name in DEFAULT_EXCLUDE_DIRS:
         return True
