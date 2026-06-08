@@ -12,7 +12,7 @@ skill (via ``exec_command``). It:
 
 Usage:
     image.py "Describe this image" "https://example.com/x.jpg"
-    image.py "理解这张图" "/Users/me/Desktop/photo.png"
+    image.py "Describe this image" "/Users/me/Desktop/photo.png"
     image.py "OCR this" "https://..." --print      # full JSON to stdout
     image.py "..." "..." --timeout 120            # 2-minute timeout
 """

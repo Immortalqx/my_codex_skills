@@ -1,6 +1,6 @@
 ---
 name: minimax-image-understand
-description: Image understanding via the upstream minimax-coding-plan-mcp tool, using the user's MiniMax token-plan API key. Use when the user wants to describe, analyze, OCR, or extract information from a specific image and Codex's built-in MCP integration is broken (openai/codex#23186). Triggers on phrases like "理解这张图", "描述这张图", "describe this image", "what's in this image", "OCR this", "analyze this picture", "caption this". Supports JPEG, PNG, and WebP from local file paths or URLs.
+description: Image understanding via the upstream minimax-coding-plan-mcp tool, using the user's MiniMax token-plan API key. Use when the user wants to describe, analyze, OCR, or extract information from a specific image and Codex's built-in MCP integration is broken (openai/codex#23186). Triggers on phrases like "describe this image", "what's in this image", "OCR this", "analyze this picture", "caption this". Supports JPEG, PNG, and WebP from local file paths or URLs.
 ---
 
 # MiniMax Image Understanding
@@ -11,16 +11,10 @@ token-plan key, bypassing Codex 0.137.0's broken MCP integration
 
 ## When to use
 
-The user wants to analyze a specific image (not search the web for
-images). Triggers:
-
-- English: "describe this image", "what's in this image", "what's in this picture", "analyze this image", "OCR this", "read the text in this image", "caption this", "explain this image"
-- Chinese: "理解这张图", "描述这张图", "看看这张图", "图里有什么", "识别图片", "OCR", "图里的文字是什么"
-- Mixed: "describe what's in /Users/me/Desktop/photo.jpg"
-
-A file path or URL must be present in the user's message, OR you must
-know where the image is (e.g. user just shared it in the conversation
-and Codex can find it on disk).
+Use this skill when Codex's built-in MCP integration is broken and the
+user wants to understand a specific image (describe, analyze, OCR).
+The user message must contain a file path or URL, or the image must be
+discoverable on disk.
 
 Do **not** use this skill for web search (use `$minimax-web-search`
 instead) or for "find me images of X" (that's a search).
@@ -43,52 +37,27 @@ Supported formats: **JPEG, PNG, WebP** (not PDF/GIF/PSD/SVG).
 The script prints the image-understanding result to stdout for Codex to
 read and does not write local result/cache/debug files.
 
-### Examples
-
-```bash
-# Local file (absolute path)
-python3 scripts/image.py "Describe this image" "/Users/me/Desktop/photo.jpg"
-
-# Local file with Chinese prompt
-python3 scripts/image.py "请详细描述这张图片" "/tmp/screenshot.png"
-
-# URL
-python3 scripts/image.py "What is shown here?" "https://example.com/x.jpg"
-
-# OCR
-python3 scripts/image.py "Read all visible text in this receipt" "/Users/me/receipt.jpg"
-
-# Raw JSON-RPC response (for programmatic parsing)
-python3 scripts/image.py "describe" "https://..." --print
-
-# Slow network? Extend timeout
-python3 scripts/image.py "..." "..." --timeout 180
-```
-
 ## What the output looks like
 
 ```text
 [minimax-skill] connected to Minimax v1.27.2
-[minimax-image-understand] prompt='一句话描述'
-  source: /Users/immortalqx/Projects/minimax/6.jpg
-  result: 一架全副武装的军用直升机在夜色中开启探照灯，低空飞越灯火通明的港口工业区。
+[minimax-image-understand] prompt='<the prompt>'
+  source: <path-or-url>
+  result: <model description, truncated to 1500 chars>
 ```
 
-The `result:` line is the model's text description (truncated to 1500
-chars for display). Output is stdout only, so Codex receives the answer
-directly and no local result/cache/debug file is created.
+The `result:` line is the model's text description. Output is stdout
+only, so Codex receives the answer directly and no local result/cache/
+debug file is created.
 
 ## How to present results to the user
 
 1. Paste the `result:` line(s) directly into your response. The model's
-   output is already a clean, descriptive text — usually no need to
+   output is already a clean, descriptive text - usually no need to
    paraphrase.
 2. If the user asked a specific question (e.g. "is this a cat?"), the
    model answers it directly. Just relay the answer.
-3. If the user wants a shorter summary, re-run with a directive prompt:
-   ```bash
-   python3 scripts/image.py "用一句话描述这张图" "<same path>"
-   ```
+3. If the user wants a shorter summary, re-run with a directive prompt.
 4. If the user wants OCR and the result is mixed with prose, ask the
    model to "list only the visible text" via a re-run.
 5. If the user wants the raw MCP response, re-run with `--print` to emit
@@ -120,11 +89,11 @@ key in any of those locations, the skill just works.
 
 ## When NOT to use this skill
 
-- The user wants to search the web → use `$minimax-web-search`
-- The user wants to fetch an image to look at → use `curl` / `wget` and
+- The user wants to search the web - use `$minimax-web-search`
+- The user wants to fetch an image to look at - use `curl` / `wget` and
   then `view_image` tool
-- The user wants to edit/transform an image → use a different tool/skill
-- The user is in Claude Desktop, Cursor, or any non-Codex client → use
+- The user wants to edit/transform an image - use a different tool/skill
+- The user is in Claude Desktop, Cursor, or any non-Codex client - use
   the upstream MCP server directly
 
 ## Reference

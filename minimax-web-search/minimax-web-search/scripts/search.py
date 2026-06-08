@@ -13,7 +13,7 @@ Default result count: 15.
 
 Usage:
     search.py "MiniMax-M3 release date"
-    search.py "2026 AI 模型最新进展" --max 20
+    search.py "latest news on MiniMax-M3" --max 20
     search.py "test" --max 5 --print
     search.py "test" --timeout 120
 """
