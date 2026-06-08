@@ -8,8 +8,7 @@ skill (via ``exec_command``). It:
 2. Spawns ``uvx minimax-coding-plan-mcp`` and talks JSON-RPC.
 3. Calls the ``understand_image`` tool with the user's prompt and image
    source (URL or local path; the MCP server handles base64 conversion).
-4. Prints the model's description and writes the full raw response to
-   ``/tmp/minimax-mcp/result-*.json`` for debugging.
+4. Prints the model's description to stdout.
 
 Usage:
     image.py "Describe this image" "https://example.com/x.jpg"
@@ -20,9 +19,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import datetime as _dt
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -30,26 +27,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lib_key import resolve  # type: ignore  # noqa: E402
 from mcp_client import McpClient, McpError  # type: ignore  # noqa: E402
-
-RESULT_DIR = Path(os.environ.get("MINIMAX_MCP_RESULT_DIR", "/tmp/minimax-mcp"))
-
-
-def _save_result(tool: str, request: dict, response: dict) -> Path:
-    """Write a JSON file for reproducibility / debugging."""
-    RESULT_DIR.mkdir(parents=True, exist_ok=True)
-    ts = _dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-    existing = list(RESULT_DIR.glob(f"result-{ts}-*.json"))
-    idx = len(existing)
-    path = RESULT_DIR / f"result-{ts}-{idx:02d}.json"
-    path.write_text(
-        json.dumps(
-            {"tool": tool, "request": request, "response": response, "ts": ts},
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
-    return path
 
 
 def _extract_text(result: dict) -> str:
@@ -125,10 +102,7 @@ def main() -> int:
         print(f"minimax-image-understand: {e}", file=sys.stderr)
         return 1
 
-    # 4. Save raw response
-    path = _save_result("understand_image", request_payload, raw)
-
-    # 5. Print
+    # 4. Print
     if args.print:
         sys.stdout.write(json.dumps(raw, ensure_ascii=False, indent=2) + "\n")
         return 0
@@ -137,7 +111,6 @@ def main() -> int:
     print(f"[minimax-image-understand] prompt={args.prompt!r}")
     print(f"  source: {args.source}")
     print(f"  result: {text[:1500]}")
-    print(f"\nfull JSON: {path}")
     return 0
 
 

@@ -19,15 +19,23 @@ so you can install one without the other. They both call the official upstream
 MCP server via JSON-RPC, so the results match what the upstream tool produces
 exactly — no API translation layer in between.
 
+Both MiniMax MCP wrapper scripts are **stdout-only** for task results. They do
+not write search results, image-understanding results, logs, debug JSON, or
+business cache files to disk. If `--print` is used, the full JSON-RPC response
+is printed to stdout for Codex to read, not saved locally. Normal runtime caches
+from the Python interpreter (`__pycache__`) or from `uvx` / `uv` dependency
+management may still exist; those are toolchain side effects, not skill result
+artifacts.
+
 ## Skills
 
 | Skill | Summary | Typical Use | Installable Directory |
 | --- | --- | --- | --- |
 | [`drawio-diagram`](./drawio-diagram/) | Draw.io research-figure workflow that builds an editable draw.io draft, reuses source paper/poster assets when available, exports PNG/SVG/PDF, and runs visual QA on the exported PNG until the QA checklist passes. | Paper figures, posters, slide visuals, and concept diagrams that need an editable draw.io artifact the user can keep refining directly in draw.io. | [`drawio-diagram/drawio-diagram`](./drawio-diagram/drawio-diagram/) |
-| [`minimax-image-understand`](./minimax-image-understand/) | Image understanding (describe / analyze / OCR) via the upstream `minimax-coding-plan-mcp` `understand_image` tool. Reads the MiniMax token-plan key from `~/.codex/switch_model/minimax/config.toml` (or `[model_providers.minimax].experimental_bearer_token` in `~/.codex/config.toml`). Supports local JPEG/PNG/WebP paths and HTTP(S) URLs. | When Codex's built-in MCP integration is broken (#23186) and the user wants to understand an image (describe, analyze, OCR). | [`minimax-image-understand/`](./minimax-image-understand/) |
+| [`minimax-image-understand`](./minimax-image-understand/) | Image understanding (describe / analyze / OCR) via the upstream `minimax-coding-plan-mcp` `understand_image` tool. Reads the MiniMax token-plan key from `~/.codex/switch_model/minimax/config.toml` (or `[model_providers.minimax].experimental_bearer_token` in `~/.codex/config.toml`). Supports local JPEG/PNG/WebP paths and HTTP(S) URLs. Prints results to stdout only; it does not write local result/debug files. | When Codex's built-in MCP integration is broken (#23186) and the user wants to understand an image (describe, analyze, OCR). | [`minimax-image-understand/`](./minimax-image-understand/) |
 | [`minimax-task-preflight`](./minimax-task-preflight/) | Prompt-clarification preflight tuned for MiniMax M3 in Codex Desktop App. It reads a raw request, asks only the necessary follow-up questions, and rewrites the request into a clearer prompt without drifting into planning or deliverable design. | Before running MiniMax M3 on ambiguous or underspecified tasks where prompt clarity matters more than early planning. | [`minimax-task-preflight/minimax-task-preflight`](./minimax-task-preflight/minimax-task-preflight/) |
 | [`minimax-thorough-execution`](./minimax-thorough-execution/) | Strict-execution protocol tuned for MiniMax M3 in Codex Desktop App. It forbids prompt rewriting during execution, prevents token-saving scope shrinkage, requires real visual inspection for screenshot/page tasks, requires source links for search-backed claims, maintains source maps, and appends a short completion audit. | When the main risks are prompt rewriting, laziness, skipped appendix/supplement, shallow search, image avoidance, or missing source grounding. | [`minimax-thorough-execution/minimax-thorough-execution`](./minimax-thorough-execution/minimax-thorough-execution/) |
-| [`minimax-web-search`](./minimax-web-search/) | Web search via the upstream `minimax-coding-plan-mcp` `web_search` tool. Same key resolution as `minimax-image-understand`. Returns up to 15 organic results (titles, links, snippets) plus related-search suggestions. | When Codex's built-in MCP integration is broken (#23186) and the user wants to search the web (news, latest updates, fact lookup, etc.). | [`minimax-web-search/`](./minimax-web-search/) |
+| [`minimax-web-search`](./minimax-web-search/) | Web search via the upstream `minimax-coding-plan-mcp` `web_search` tool. Same key resolution as `minimax-image-understand`. Returns up to 15 organic results (titles, links, snippets) plus related-search suggestions. Prints results to stdout only; it does not write local result/debug files. | When Codex's built-in MCP integration is broken (#23186) and the user wants to search the web (news, latest updates, fact lookup, etc.). | [`minimax-web-search/`](./minimax-web-search/) |
 | [`mock-review`](./mock-review/) | Mock peer-review workflow for manuscript authors. It researches venue or journal requirements, inspects manuscript PDFs, studies related literature and experimental baselines, and writes a simulated review for rebuttal preparation and paper improvement. | Pre-submission risk check, rebuttal preparation, reviewer-style critique before revising a manuscript. | [`mock-review/mock-review`](./mock-review/mock-review/) |
 | [`research-survey-loop`](./research-survey-loop/) | Long-running literature survey workflow. It creates or resumes survey tasks, maintains stable task documents, searches prioritized sources, migrates local PDFs, reads papers in chunks, and incrementally writes a Chinese survey. | Sustained literature surveys for robotics, embodied AI, computer vision, world models, navigation, manipulation, 3D perception, and adjacent topics. | [`research-survey-loop/research-survey-loop`](./research-survey-loop/research-survey-loop/) |
 | [`update-source-map`](./update-source-map/) | Create or update an agent-readable source map (Markdown + JSON) for any project directory. It auto-detects whether to build a new map or refresh an existing one, and preserves hand-curated per-file summaries across regenerations. | When starting work in a new / unfamiliar workspace, refreshing a stale index after files change, or handing a project over to another agent. | [`update-source-map/update-source-map`](./update-source-map/update-source-map/) |
@@ -97,6 +105,13 @@ The two skills auto-discover your MiniMax token-plan key from any of:
 - `[model_providers.minimax].experimental_bearer_token` in `~/.codex/switch_model/minimax/config.toml`
 
 No additional configuration is needed if any of those already hold your key.
+
+Runtime note: the MiniMax wrapper scripts themselves do not persist search or
+image-understanding outputs. They only print to stdout. CPython may still create
+`__pycache__` bytecode files when scripts run, and `uvx` / `uv` may use its own
+dependency cache (for example under the user's uv cache directory). Those caches
+are normal interpreter/package-manager behavior and are not generated result
+files from these skills.
 
 ## Notes
 

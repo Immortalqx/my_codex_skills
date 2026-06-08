@@ -7,23 +7,20 @@ This is the entry point invoked by the Codex ``minimax-web-search`` skill
 1. Resolves the MiniMax API key (from env or ~/.codex config files).
 2. Spawns ``uvx minimax-coding-plan-mcp`` and talks JSON-RPC.
 3. Calls the ``web_search`` tool with the user's query.
-4. Prints a one-screen summary (title, link, snippet) and writes the
-   full raw response to ``/tmp/minimax-mcp/result-*.json`` for debugging.
+4. Prints a one-screen summary (title, link, snippet) to stdout.
 
 Default result count: 15.
 
 Usage:
     search.py "MiniMax-M3 release date"
     search.py "2026 AI 模型最新进展" --max 20
-    search.py "test" --max 5 --print        # full JSON to stdout
-    search.py "test" --timeout 120          # 2-minute timeout
+    search.py "test" --max 5 --print
+    search.py "test" --timeout 120
 """
 from __future__ import annotations
 
 import argparse
-import datetime as _dt
 import json
-import os
 import re
 import sys
 from pathlib import Path
@@ -36,25 +33,6 @@ from lib_key import resolve  # type: ignore  # noqa: E402
 from mcp_client import McpClient, McpError  # type: ignore  # noqa: E402
 
 DEFAULT_MAX_RESULTS = 15
-RESULT_DIR = Path(os.environ.get("MINIMAX_MCP_RESULT_DIR", "/tmp/minimax-mcp"))
-
-
-def _save_result(tool: str, request: dict, response: dict) -> Path:
-    """Write a JSON file for reproducibility / debugging."""
-    RESULT_DIR.mkdir(parents=True, exist_ok=True)
-    ts = _dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-    existing = list(RESULT_DIR.glob(f"result-{ts}-*.json"))
-    idx = len(existing)
-    path = RESULT_DIR / f"result-{ts}-{idx:02d}.json"
-    path.write_text(
-        json.dumps(
-            {"tool": tool, "request": request, "response": response, "ts": ts},
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
-    return path
 
 
 def _find_json_object(text: str) -> str | None:
@@ -193,10 +171,7 @@ def main() -> int:
         print(f"minimax-web-search: {e}", file=sys.stderr)
         return 1
 
-    # 3. Save raw response (always, for debugging)
-    path = _save_result("web_search", request_payload, raw)
-
-    # 4. Print
+    # 3. Print
     if args.print:
         sys.stdout.write(json.dumps(raw, ensure_ascii=False, indent=2) + "\n")
         return 0
@@ -207,12 +182,10 @@ def main() -> int:
         n = len(parsed.get("organic") or [])
         print(f"[minimax-web-search] {n} results for: {args.query!r}")
         print(_summarize_search(parsed, max_items=args.max))
-        print(f"\nfull JSON: {path}")
     else:
         # Couldn't parse — show first 800 chars
         print(f"[minimax-web-search] raw text (no JSON detected):")
         print(text[:800])
-        print(f"\nfull result: {path}")
     return 0
 
 

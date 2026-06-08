@@ -40,6 +40,8 @@ Where `<image-source>` is either:
 - A relative path resolved against the current working directory
 
 Supported formats: **JPEG, PNG, WebP** (not PDF/GIF/PSD/SVG).
+The script prints the image-understanding result to stdout for Codex to
+read and does not write local result/cache/debug files.
 
 ### Examples
 
@@ -70,13 +72,11 @@ python3 scripts/image.py "..." "..." --timeout 180
 [minimax-image-understand] prompt='一句话描述'
   source: /Users/immortalqx/Projects/minimax/6.jpg
   result: 一架全副武装的军用直升机在夜色中开启探照灯，低空飞越灯火通明的港口工业区。
-
-full JSON: /tmp/minimax-mcp/result-YYYYMMDD-HHMMSS-NN.json
 ```
 
 The `result:` line is the model's text description (truncated to 1500
-chars for display; full content in the JSON file). The script always
-writes the JSON file, even when the result is empty.
+chars for display). Output is stdout only, so Codex receives the answer
+directly and no local result/cache/debug file is created.
 
 ## How to present results to the user
 
@@ -91,6 +91,8 @@ writes the JSON file, even when the result is empty.
    ```
 4. If the user wants OCR and the result is mixed with prose, ask the
    model to "list only the visible text" via a re-run.
+5. If the user wants the raw MCP response, re-run with `--print` to emit
+   the full JSON-RPC response to stdout.
 
 ## Configuration
 

@@ -29,7 +29,8 @@ python3 <skill-dir>/scripts/search.py "<query>" [--max N] [--timeout S] [--print
 ```
 
 Where `<skill-dir>` is this skill's install location. The default `--max`
-is 15; the user can override.
+is 15; the user can override. The script prints results to stdout for
+Codex to read and does not write local result/cache/debug files.
 
 ### Examples
 
@@ -60,13 +61,10 @@ python3 scripts/search.py "obscure topic" --timeout 180
 
   related: <related query 1>, <related query 2>, ...
   status: code=0 msg=success
-
-full JSON: /tmp/minimax-mcp/result-YYYYMMDD-HHMMSS-NN.json
 ```
 
-The last line points to a JSON file containing the full request and
-response (for debugging). The script always writes this file, even when
-the summary is empty.
+The output is stdout only, so Codex receives the search results directly
+and no local result/cache/debug file is created.
 
 ## How to present results to the user
 
@@ -75,8 +73,8 @@ the summary is empty.
 2. If the user wants more than the default 15, re-run with `--max N` (cap
    at 30 — the upstream `web_search` tool itself returns at most ~10-20
    organic per query).
-3. If the user wants raw data (e.g. all related_searches, base_resp), use
-   the `full JSON:` path printed at the end. Don't re-parse stdout.
+3. If the user wants raw data (e.g. all related_searches, base_resp),
+   re-run with `--print` to emit the full JSON-RPC response to stdout.
 
 ## Configuration
 

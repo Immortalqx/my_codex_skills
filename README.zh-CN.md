@@ -15,15 +15,17 @@
 
 `minimax-web-search` 和 `minimax-image-understand` 是**兄弟 skill**：完全独立（各自带自己的 `lib_key.py` + `mcp_client.py`），可以单独装/卸。它们都通过 JSON-RPC 调官方上游 MCP server，**结果与上游工具输出完全一致** — 中间没有 API 翻译层。
 
+这两个 MiniMax MCP wrapper 的任务结果都是 **stdout-only**：不会把搜索结果、图片理解结果、日志、调试 JSON 或业务缓存文件写入本地磁盘。即使使用 `--print`，完整 JSON-RPC 响应也是打印到 stdout 供 Codex 读取，而不是保存到本地文件。Python 解释器可能产生 `__pycache__`，`uvx` / `uv` 也可能使用自己的依赖缓存；这些属于工具链正常运行时副作用，不是 skill 生成的结果文件。
+
 ## Skills
 
 | Skill | 中文简介 | 典型用途 | 可安装目录 |
 | --- | --- | --- | --- |
 | [`drawio-diagram`](./drawio-diagram/) | 面向科研图示的 draw.io 工作流；先生成可编辑的 draw.io 草稿，尽可能复用论文或海报中的现有图像素材，导出 PNG/SVG/PDF，再在 PNG 上跑视觉 QA 循环，直到 QA 清单全部通过。 | 论文配图、海报、演示文稿视觉稿、概念图，尤其适合需要一份可继续在 draw.io 里细化的可编辑草图的场景。 | [`drawio-diagram/drawio-diagram`](./drawio-diagram/drawio-diagram/) |
-| [`minimax-image-understand`](./minimax-image-understand/) | 通过上游 `minimax-coding-plan-mcp` 的 `understand_image` 工具做图像理解。自动从 `~/.codex/switch_model/minimax/config.toml`（或 `~/.codex/config.toml` 的 `[model_providers.minimax].experimental_bearer_token`）读 MiniMax token plan key。支持本地 JPEG/PNG/WebP 路径和 HTTP(S) URL。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想理解一张图（描述 / 分析 / OCR）时。 | [`minimax-image-understand/`](./minimax-image-understand/) |
+| [`minimax-image-understand`](./minimax-image-understand/) | 通过上游 `minimax-coding-plan-mcp` 的 `understand_image` 工具做图像理解。自动从 `~/.codex/switch_model/minimax/config.toml`（或 `~/.codex/config.toml` 的 `[model_providers.minimax].experimental_bearer_token`）读 MiniMax token plan key。支持本地 JPEG/PNG/WebP 路径和 HTTP(S) URL。结果只打印到 stdout，不写本地结果/调试文件。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想理解一张图（描述 / 分析 / OCR）时。 | [`minimax-image-understand/`](./minimax-image-understand/) |
 | [`minimax-task-preflight`](./minimax-task-preflight/) | 面向 Codex Desktop App 中 MiniMax M3 的 prompt 澄清 skill。它先读取原始请求，只在必要时追问，再把请求改写成更清晰的 prompt，不滑向任务规划或交付设计。 | 在用 MiniMax M3 执行一个含糊、缺信息或容易歧义的任务前，先把 prompt 澄清到足够明确。 | [`minimax-task-preflight/minimax-task-preflight`](./minimax-task-preflight/minimax-task-preflight/) |
 | [`minimax-thorough-execution`](./minimax-thorough-execution/) | 面向 Codex Desktop App 中 MiniMax M3 的严格执行协议。它禁止执行时改写 prompt，禁止为了省 token 悄悄缩 scope，要求截图/逐页任务基于渲染图做核验，要求搜索返回原始链接，维护 source map，并在最终答案里附一个简短的 completion audit。 | 当主要风险是乱改 prompt、偷懒、跳过正文或补充材料、少看图、少搜索、不贴链接时使用。 | [`minimax-thorough-execution/minimax-thorough-execution`](./minimax-thorough-execution/minimax-thorough-execution/) |
-| [`minimax-web-search`](./minimax-web-search/) | 通过上游 `minimax-coding-plan-mcp` 的 `web_search` 工具做网络搜索。Key 解析方式与 `minimax-image-understand` 一致。返回最多 15 条 organic 结果（标题、链接、摘要）外加相关搜索建议。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想搜网（新闻、查最新动态、查事实等）时。 | [`minimax-web-search/`](./minimax-web-search/) |
+| [`minimax-web-search`](./minimax-web-search/) | 通过上游 `minimax-coding-plan-mcp` 的 `web_search` 工具做网络搜索。Key 解析方式与 `minimax-image-understand` 一致。返回最多 15 条 organic 结果（标题、链接、摘要）外加相关搜索建议。结果只打印到 stdout，不写本地结果/调试文件。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想搜网（新闻、查最新动态、查事实等）时。 | [`minimax-web-search/`](./minimax-web-search/) |
 | [`mock-review`](./mock-review/) | 给论文作者使用的模拟审稿工具；按指定会议或期刊调研官方要求，检查稿件 PDF 材料风险，调研相关文献和实验对比，并生成用于准备 rebuttal、发现论文风险和改进论文的模拟审稿意见。 | 投稿前风险排查、rebuttal 准备、论文修改前的 reviewer-style critique。 | [`mock-review/mock-review`](./mock-review/mock-review/) |
 | [`research-survey-loop`](./research-survey-loop/) | 长周期文献综述工作流；创建或继续综述任务，维护 `task.md`、`round_log.md`、`current_task.md` 和 `survey.md`，按来源优先级搜索论文，迁移本地 PDF，并逐轮扩展中文综述。 | 机器人、具身智能、计算机视觉、世界模型、导航、操作、3D 感知等方向的持续文献调研。 | [`research-survey-loop/research-survey-loop`](./research-survey-loop/research-survey-loop/) |
 | [`update-source-map`](./update-source-map/) | 为任意项目目录创建或更新一份 agent 可读的 source map（Markdown + JSON）。自动检测是该新建还是刷新，并跨更新保留手写的 per-file 摘要。 | 处理新 / 不熟悉的 workspace；为多轮任务准备上下文；把项目交给另一个 agent 时。 | [`update-source-map/update-source-map`](./update-source-map/update-source-map/) |
@@ -92,6 +94,8 @@ iwr -useb https://astral.sh/uv/install.ps1 | iex
 - `~/.codex/switch_model/minimax/config.toml` 里的 `[model_providers.minimax].experimental_bearer_token`
 
 只要其中任一位置已经有 key，就不需要额外配置。
+
+运行时说明：两个 MiniMax wrapper 脚本本身不会持久化搜索或图像理解输出，只会打印到 stdout。CPython 运行脚本时仍可能创建 `__pycache__` 字节码文件，`uvx` / `uv` 也可能使用自己的依赖缓存目录。这些是解释器和包管理器的正常行为，不是这些 skill 生成的结果文件。
 
 ## 说明
 
