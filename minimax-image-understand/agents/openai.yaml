@@ -1,0 +1,4 @@
+interface:
+  display_name: "MiniMax Image Understanding"
+  short_description: "Image understand via MiniMax token-plan key"
+  default_prompt: "Understand an image using minimax-image-understand: read ~/.codex/switch_model/minimax/config.toml for the bearer token, call upstream minimax-coding-plan-mcp's understand_image tool with the user's prompt and image path/URL, return the model's description."
