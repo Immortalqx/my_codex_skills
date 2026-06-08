@@ -4,17 +4,7 @@
 
 `drawio_diagram` 是一个面向科研图示的 Codex skill 仓库，核心是先整理可编辑的 `draw.io` / `diagrams.net` 草稿，再产出通过严格视觉 QA 的 PNG/SVG/PDF 导出；草图本身就要足够好，用户可以直接在 draw.io 里继续编辑并作为最终配图使用。
 
-可安装的 skill 位于 [drawio-diagram/](./drawio-diagram/)。
-
-## 快速开始
-
-把 skill 复制到 `$CODEX_HOME/skills/`：
-
-```bash
-cp -R drawio-diagram "$CODEX_HOME/skills/"
-```
-
-然后让 Codex 对论文、海报或概念图任务使用 `$drawio-diagram`：
+让 Codex 对论文、海报或概念图任务使用 `$drawio-diagram`：
 
 ```text
 Use $drawio-diagram to create a research figure from the current workspace.
@@ -74,8 +64,8 @@ Keep the structure editable, connect an auto_drawio bridge if available, tighten
 ## 仓库结构
 
 - `README.md` 和 `README.zh-CN.md`：仓库说明文档
-- `drawio-diagram/`：可安装的 Codex skill
-- `drawio-diagram/SKILL.md`：可安装的 Codex skill 定义
+- `drawio-diagram/`：Codex 读取的 skill 文件目录
+- `drawio-diagram/SKILL.md`：Codex skill 定义
 - `drawio-diagram/scripts/`：确定性的辅助脚本
 - `drawio-diagram/references/`：bridge 和流程参考文档
 - `drawio-diagram/agents/`：skill 使用的 agent 配置

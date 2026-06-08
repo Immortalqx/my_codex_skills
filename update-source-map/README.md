@@ -10,8 +10,6 @@ The skill auto-detects whether a source map already exists in the workspace:
 - **Create** mode: builds a new `SOURCE_MAP.md` + `source_map.json` from scratch
 - **Update** mode: re-scans the workspace, preserves the hand-curated per-file summaries, and shows a diff of what changed since the last scan
 
-The installable skill is in [update-source-map/](./update-source-map/).
-
 ## When to use
 
 - When starting work in a new / unfamiliar workspace
@@ -28,26 +26,6 @@ Three files in `<workspace>/x_temp/` (or your chosen output dir):
 | `SOURCE_MAP.md` | Markdown | Primary deliverable — human + agent readable |
 | `source_map.json` | JSON | Structured data — programmatic queries |
 | `curated_summaries.json` | JSON | Hand-written per-file summaries (preserved across regenerations) |
-
-## Quick Start
-
-Copy the installable skill into `$CODEX_HOME/skills/`:
-
-```bash
-cp -R update-source-map "$CODEX_HOME/skills/"
-```
-
-Then ask Codex to use `$update-source-map` on a workspace:
-
-```text
-Use $update-source-map to create or update the source map for this project.
-```
-
-Or run the script directly:
-
-```bash
-python3 update-source-map/scripts/regenerate.py /path/to/workspace
-```
 
 ## Important Boundary
 

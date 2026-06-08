@@ -13,8 +13,6 @@ The skill is designed for the case where the user hands over a lecture-slide PDF
 - cites every claim that came from outside the PDF with an original URL
 - is written to a new versioned file and never overwrites an existing note
 
-The installable skill is in [help-me-read/](./help-me-read/).
-
 ## When To Use
 
 Use this skill when the user asks for:
@@ -24,24 +22,6 @@ Use this skill when the user asks for:
 - a clean new note file next to existing ones, not an overwrite
 
 Do not use this skill for casual summaries, slide-by-slide transcription, or one-line Q&A about a paper.
-
-## Quick Start
-
-Copy the installable skill into `$CODEX_HOME/skills/`:
-
-```bash
-cp -R help-me-read "$CODEX_HOME/skills/"
-```
-
-Then ask Codex to use `$help-me-read` on a PDF:
-
-```text
-Use $help-me-read on this PDF: lecture7.pdf
-Write the close-read note to <user-chosen-output-dir>/<doc-slug>_close_read_v<N>.md (file name decided at runtime from the PDF's slug and a version suffix)
-Use Chinese for the note.
-```
-
-If the user already has web search and image-understanding skills installed, the skill will prefer them. If not, the skill falls back to direct HTTP and OCR and records the gap in the note.
 
 ## How It Works
 
@@ -80,12 +60,8 @@ When the user points at an existing folder ((the users target output directory))
 ## Repository Layout
 
 - `README.md` and `README.zh-CN.md`: repository docs
-- `help-me-read/`: installable Codex skill
+- `help-me-read/`: Codex skill files
 - `help-me-read/SKILL.md`: skill definition and workflow
 - `help-me-read/references/style-guide.md`: voice, term glossing, section rules
 - `help-me-read/assets/template.md`: blank close-read note skeleton
 - `help-me-read/agents/openai.yaml`: UI metadata
-
-## Encoding Note
-
-All skill internals (`SKILL.md`, `style-guide.md`, `template.md`, `README.md`) are in English to avoid encoding ambiguity. The only Chinese content is in `README.zh-CN.md` and in the final close-read note itself, both of which the user explicitly asks for in Chinese. If a future contributor needs to add Chinese prose to a skill-internal file, write the file with a UTF-8-without-BOM encoding using Python or another reliable tool — never paste Chinese through a Windows PowerShell `Set-Content` call, which can silently corrupt the file.

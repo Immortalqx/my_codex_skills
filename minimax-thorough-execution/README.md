@@ -6,8 +6,6 @@ Chinese version: [README.zh-CN.md](./README.zh-CN.md)
 
 It is a strict execution layer for **following the user's prompt as written**. The skill is designed to counter MiniMax-style failure modes such as rewriting the task, silently shrinking scope to save tokens, reading only the abstract and introduction, skipping appendix or supplementary material, avoiding real visual inspection, performing shallow search, and omitting source links.
 
-The installable skill is in [minimax-thorough-execution/](./minimax-thorough-execution/).
-
 ## Important Boundary
 
 This skill does not clarify, judge, optimize, or rewrite the prompt.
@@ -135,20 +133,6 @@ A source map should capture at least:
 
 The source map is an organizational and continuation artifact. It is not final evidence by itself.
 
-## Quick Start
-
-Copy the installable skill into `$CODEX_HOME/skills/`:
-
-```bash
-cp -R minimax-thorough-execution "$CODEX_HOME/skills/"
-```
-
-Then ask Codex to use `$minimax-thorough-execution` on the user's prompt:
-
-```text
-Use $minimax-thorough-execution to execute my prompt exactly as written, without rewriting it, silently shrinking scope, skipping appendix or supplement, guessing from text instead of inspecting images, or omitting source links.
-```
-
 ## Typical Use
 
 Example:
@@ -190,6 +174,6 @@ Typical sequence:
 ## Repository Layout
 
 - `README.md` and `README.zh-CN.md`: repository docs
-- `minimax-thorough-execution/`: installable Codex skill
+- `minimax-thorough-execution/`: Codex skill files
 - `minimax-thorough-execution/SKILL.md`: skill definition
 - `minimax-thorough-execution/agents/`: agent config used by the skill

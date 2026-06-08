@@ -6,11 +6,9 @@ Web search via the upstream `minimax-coding-plan-mcp` `web_search` tool, using t
 
 Returns up to 15 organic results (titles, links, snippets) plus related-search suggestions. Prints results to stdout only - does not write local result, cache, or debug files.
 
-The `SKILL.md` and all bundled scripts use **English only** so that Codex never sees CJK mojibake when reading the skill.
-
 ## When to use
 
-Use this skill when Codex's built-in MCP integration is broken and the user wants to search the web (news, latest updates, fact lookup, etc.). Triggers (English only): "search", "find", "look up", "google", "latest news on", "what's the latest", "any updates on", "current status of".
+Use this skill when Codex's built-in MCP integration is broken and the user wants to search the web (news, latest updates, fact lookup, etc.). Triggers: "search", "find", "look up", "google", "latest news on", "what's the latest", "any updates on", "current status of".
 
 Do **not** use this skill for:
 
@@ -25,16 +23,6 @@ For broad, fast-moving, or authoritative-coverage queries, the skill recommends 
 2. **Chinese keywords** - the same intent translated to Chinese
 
 Then dedupe by URL, prefer the higher-ranked hit when the same URL appears in both, and present the combined set to the user. For narrow technical lookups (a specific API, a specific error message, a single library), a single language is usually enough - the skill says so explicitly. See `SKILL.md` -> "Bilingual search" for the full recommendation and a worked example.
-
-## Installable skill directory
-
-The actual installable skill (with `SKILL.md`, `agents/`, `scripts/`) lives in:
-
-```
-minimax-web-search/minimax-web-search/
-```
-
-Point your Codex skill installer at that nested directory. The top-level `README.md` and `README.zh-CN.md` here are repo-level documentation only and are not part of the installable skill, so they will not be confused with `SKILL.md` by the installer.
 
 ## Configuration
 
@@ -54,3 +42,4 @@ You do not need to configure anything manually - if the key is present in any of
 - Upstream MCP server: [MiniMax-AI/MiniMax-Coding-Plan-MCP](https://github.com/MiniMax-AI/MiniMax-Coding-Plan-MCP)
 - Codex MCP issue: [openai/codex#23186](https://github.com/openai/codex/issues/23186)
 - See also: image-understanding skill (if installed)
+

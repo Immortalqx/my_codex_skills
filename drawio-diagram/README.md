@@ -4,32 +4,6 @@ Chinese version: [README.zh-CN.md](./README.zh-CN.md)
 
 `drawio_diagram` is a Codex skill repository for research-figure workflows. The deliverable is an editable `draw.io` / `diagrams.net` draft plus its PNG/SVG/PDF exports that have passed strict visual QA. The draw.io draft is meant to be reused and edited by the user directly, not discarded as an intermediate artifact.
 
-The installable skill is in [drawio-diagram/](./drawio-diagram/).
-
-## Quick Start
-
-Copy the skill into `$CODEX_HOME/skills/`:
-
-```bash
-cp -R drawio-diagram "$CODEX_HOME/skills/"
-```
-
-Then ask Codex to use `$drawio-diagram` on a paper, poster, or concept-diagram task:
-
-```text
-Use $drawio-diagram to create a research figure from the current workspace.
-Read the available paper assets first, reuse useful figures or plots, create an editable draw.io draft under image_draft/,
-export PNG/SVG/PDF, and run visual QA on the PNG. Iterate on the .drawio until the QA loop passes.
-Style target: clean technical poster figure.
-```
-
-If you already have a `.drawio` file and want Codex to continue from it:
-
-```text
-Use $drawio-diagram on this existing .drawio file.
-Keep the structure editable, connect an auto_drawio bridge if available, tighten the layout, re-export, and re-run the QA loop.
-```
-
 ## How It Works
 
 1. Codex reads the local paper, poster, slides, notes, or experiment materials and checks for reusable visual assets.
@@ -74,8 +48,8 @@ That repository is a useful reference for the surrounding draw.io bridge workflo
 ## Repository Layout
 
 - `README.md` and `README.zh-CN.md`: repository docs
-- `drawio-diagram/`: installable Codex skill
-- `drawio-diagram/SKILL.md`: installable Codex skill definition
+- `drawio-diagram/`: Codex skill files
+- `drawio-diagram/SKILL.md`: Codex skill definition
 - `drawio-diagram/scripts/`: deterministic helper scripts
 - `drawio-diagram/references/`: bridge and workflow references
 - `drawio-diagram/agents/`: agent config used by the skill

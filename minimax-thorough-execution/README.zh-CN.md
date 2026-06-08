@@ -6,8 +6,6 @@
 
 它是一个**严格按用户 prompt 干活**的执行层。这个 skill 的目标是压制 MiniMax 常见的失败模式，比如擅自改写任务、为了省 token 悄悄缩小任务范围、只读 abstract 和 introduction、跳过 appendix 或 supplementary material、不认真做视觉核验、浅搜索，以及搜完不给原始链接。
 
-真正可安装的 skill 位于 [minimax-thorough-execution/](./minimax-thorough-execution/)。
-
 ## 重要边界
 
 这个 skill 不负责澄清、评价、优化或改写 prompt。
@@ -137,13 +135,7 @@ source map 只是组织和续跑工具，本身不能替代最终证据。
 
 ## 快速开始
 
-把可安装的 skill 复制到 `$CODEX_HOME/skills/`：
-
-```bash
-cp -R minimax-thorough-execution "$CODEX_HOME/skills/"
-```
-
-然后让 Codex 对用户给出的 prompt 使用 `$minimax-thorough-execution`：
+让 Codex 对用户给出的 prompt 使用 `$minimax-thorough-execution`：
 
 ```text
 Use $minimax-thorough-execution to execute my prompt exactly as written, without rewriting it, silently shrinking scope, skipping appendix or supplement, guessing from text instead of inspecting images, or omitting source links.
@@ -190,6 +182,7 @@ Completion audit:
 ## 仓库结构
 
 - `README.md` 和 `README.zh-CN.md`：仓库说明
-- `minimax-thorough-execution/`：真正用于安装的 Codex skill
+- `minimax-thorough-execution/`：Codex 读取的 skill 文件目录
 - `minimax-thorough-execution/SKILL.md`：skill 定义
 - `minimax-thorough-execution/agents/`：skill 使用的 agent 配置
+

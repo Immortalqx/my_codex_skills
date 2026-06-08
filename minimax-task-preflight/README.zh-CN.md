@@ -6,8 +6,6 @@
 
 它是执行前的一层窄 preflight。这个 skill 只负责读取原始用户请求，识别真正影响后续 prompt 的歧义，在必要时做简短追问，然后把请求改写成更清晰的 prompt。
 
-真正可安装的 skill 位于 [minimax-task-preflight/](./minimax-task-preflight/)。
-
 ## 重要边界
 
 这个 skill **只用于 prompt 澄清**。
@@ -24,13 +22,7 @@
 
 ## 快速开始
 
-把可安装的 skill 复制到 `$CODEX_HOME/skills/`：
-
-```bash
-cp -R minimax-task-preflight "$CODEX_HOME/skills/"
-```
-
-然后让 Codex 使用 `$minimax-task-preflight` 处理原始请求：
+让 Codex 使用 `$minimax-task-preflight` 处理原始请求：
 
 ```text
 Use $minimax-task-preflight to read my raw request, ask only the necessary clarification questions, and rewrite it into a clearer prompt without planning how to execute it.
@@ -83,6 +75,6 @@ Read the paper in paper.pdf and explain the method section in Chinese. If the ap
 ## 仓库结构
 
 - `README.md` 和 `README.zh-CN.md`：仓库说明
-- `minimax-task-preflight/`：真正用于安装的 Codex skill
+- `minimax-task-preflight/`：Codex 读取的 skill 文件目录
 - `minimax-task-preflight/SKILL.md`：skill 定义
 - `minimax-task-preflight/agents/`：skill 使用的 agent 配置

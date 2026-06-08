@@ -22,70 +22,40 @@
 | Skill | 中文简介 | 典型用途 | 可安装目录 |
 | --- | --- | --- | --- |
 | [`drawio-diagram`](./drawio-diagram/) | 面向科研图示的 draw.io 工作流；先生成可编辑的 draw.io 草稿，尽可能复用论文或海报中的现有图像素材，导出 PNG/SVG/PDF，再在 PNG 上跑视觉 QA 循环，直到 QA 清单全部通过。 | 论文配图、海报、演示文稿视觉稿、概念图，尤其适合需要一份可继续在 draw.io 里细化的可编辑草图的场景。 | [`drawio-diagram/drawio-diagram`](./drawio-diagram/drawio-diagram/) |
-| [`minimax-image-understand`](./minimax-image-understand/) | 通过上游 `minimax-coding-plan-mcp` 的 `understand_image` 工具做图像理解。自动从 `~/.codex/switch_model/minimax/config.toml`（或 `~/.codex/config.toml` 的 `[model_providers.minimax].experimental_bearer_token`）读 MiniMax token plan key。支持本地 JPEG/PNG/WebP 路径和 HTTP(S) URL。结果只打印到 stdout，不写本地结果/调试文件。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想理解一张图（描述 / 分析 / OCR）时。 | [`minimax-image-understand/`](./minimax-image-understand/) |
+| [`help-me-read`](./help-me-read/) | 深读用户提供的 PDF，生成带页面截图、图表解释、背景补充和版本化输出文件的故事化精读笔记。 | 当用户需要 lecture slides 或论文的精读笔记、深入解析、tutor-style breakdown 时。 | [`help-me-read/help-me-read`](./help-me-read/help-me-read/) |
+| [`minimax-image-understand`](./minimax-image-understand/) | 通过上游 `minimax-coding-plan-mcp` 的 `understand_image` 工具做图像理解。自动从 `~/.codex/switch_model/minimax/config.toml`（或 `~/.codex/config.toml` 的 `[model_providers.minimax].experimental_bearer_token`）读 MiniMax token plan key。支持本地 JPEG/PNG/WebP 路径和 HTTP(S) URL。结果只打印到 stdout，不写本地结果/调试文件。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想理解一张图（描述 / 分析 / OCR）时。 | [`minimax-image-understand/minimax-image-understand`](./minimax-image-understand/minimax-image-understand/) |
 | [`minimax-task-preflight`](./minimax-task-preflight/) | 面向 Codex Desktop App 中 MiniMax M3 的 prompt 澄清 skill。它先读取原始请求，只在必要时追问，再把请求改写成更清晰的 prompt，不滑向任务规划或交付设计。 | 在用 MiniMax M3 执行一个含糊、缺信息或容易歧义的任务前，先把 prompt 澄清到足够明确。 | [`minimax-task-preflight/minimax-task-preflight`](./minimax-task-preflight/minimax-task-preflight/) |
 | [`minimax-thorough-execution`](./minimax-thorough-execution/) | 面向 Codex Desktop App 中 MiniMax M3 的严格执行协议。它禁止执行时改写 prompt，禁止为了省 token 悄悄缩 scope，要求截图/逐页任务基于渲染图做核验，要求搜索返回原始链接，维护 source map，并在最终答案里附一个简短的 completion audit。 | 当主要风险是乱改 prompt、偷懒、跳过正文或补充材料、少看图、少搜索、不贴链接时使用。 | [`minimax-thorough-execution/minimax-thorough-execution`](./minimax-thorough-execution/minimax-thorough-execution/) |
-| [`minimax-web-search`](./minimax-web-search/) | 通过上游 `minimax-coding-plan-mcp` 的 `web_search` 工具做网络搜索。Key 解析方式与 `minimax-image-understand` 一致。返回最多 15 条 organic 结果（标题、链接、摘要）外加相关搜索建议。结果只打印到 stdout，不写本地结果/调试文件。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想搜网（新闻、查最新动态、查事实等）时。 | [`minimax-web-search/`](./minimax-web-search/) |
+| [`minimax-web-search`](./minimax-web-search/) | 通过上游 `minimax-coding-plan-mcp` 的 `web_search` 工具做网络搜索。Key 解析方式与 `minimax-image-understand` 一致。返回最多 15 条 organic 结果（标题、链接、摘要）外加相关搜索建议。结果只打印到 stdout，不写本地结果/调试文件。 | 当 Codex 自带的 MCP 集成坏了（#23186）而用户想搜网（新闻、查最新动态、查事实等）时。 | [`minimax-web-search/minimax-web-search`](./minimax-web-search/minimax-web-search/) |
 | [`mock-review`](./mock-review/) | 给论文作者使用的模拟审稿工具；按指定会议或期刊调研官方要求，检查稿件 PDF 材料风险，调研相关文献和实验对比，并生成用于准备 rebuttal、发现论文风险和改进论文的模拟审稿意见。 | 投稿前风险排查、rebuttal 准备、论文修改前的 reviewer-style critique。 | [`mock-review/mock-review`](./mock-review/mock-review/) |
 | [`research-survey-loop`](./research-survey-loop/) | 长周期文献综述工作流；创建或继续综述任务，维护 `task.md`、`round_log.md`、`current_task.md` 和 `survey.md`，按来源优先级搜索论文，迁移本地 PDF，并逐轮扩展中文综述。 | 机器人、具身智能、计算机视觉、世界模型、导航、操作、3D 感知等方向的持续文献调研。 | [`research-survey-loop/research-survey-loop`](./research-survey-loop/research-survey-loop/) |
 | [`update-source-map`](./update-source-map/) | 为任意项目目录创建或更新一份 agent 可读的 source map（Markdown + JSON）。自动检测是该新建还是刷新，并跨更新保留手写的 per-file 摘要。 | 处理新 / 不熟悉的 workspace；为多轮任务准备上下文；把项目交给另一个 agent 时。 | [`update-source-map/update-source-map`](./update-source-map/update-source-map/) |
 
 ## 安装
 
-把真正可安装的 skill 目录复制到 Codex skills 目录即可。
+每个 skill 真正可安装的单元都是仓库里的内层 `<skill>/<skill>/` 目录。外层 `<skill>/README.md` 和 `<skill>/README.zh-CN.md` 只是仓库说明，不能安装进 Codex skills 目录。
 
-```powershell
-# 安装 drawio-diagram
-Copy-Item -Recurse -Force .\drawio-diagram\drawio-diagram "$env:USERPROFILE\.codex\skills\drawio-diagram"
+让 Codex 安装即可。这个仓库只需要约束源目录和目标目录；具体复制命令由 Codex 根据 Windows / macOS / Linux 环境自行处理。
 
-# 安装 minimax-image-understand
-Copy-Item -Recurse -Force .\minimax-image-understand "$env:USERPROFILE\.codex\skills\minimax-image-understand"
+```text
+Use $skill-installer to install the following skills from this repo into the local Codex skills directory.
 
-# 安装 minimax-task-preflight
-Copy-Item -Recurse -Force .\minimax-task-preflight\minimax-task-preflight "$env:USERPROFILE\.codex\skills\minimax-task-preflight"
+For each <skill> below:
+  - source: <this-repo>/<skill>/<skill>/
+  - target:$CODEX_HOME/skills/<skill>/
+  - copy the contents flat (not the outer folder)
+  - skip any __pycache__ directory
 
-# 安装 minimax-thorough-execution
-Copy-Item -Recurse -Force .\minimax-thorough-execution\minimax-thorough-execution "$env:USERPROFILE\.codex\skills\minimax-thorough-execution"
-
-# 安装 minimax-web-search
-Copy-Item -Recurse -Force .\minimax-web-search "$env:USERPROFILE\.codex\skills\minimax-web-search"
-
-# 安装 mock-review
-Copy-Item -Recurse -Force .\mock-review\mock-review "$env:USERPROFILE\.codex\skills\mock-review"
-
-# 安装 research-survey-loop
-Copy-Item -Recurse -Force .\research-survey-loop\research-survey-loop "$env:USERPROFILE\.codex\skills\research-survey-loop"
-
-# 安装 update-source-map
-Copy-Item -Recurse -Force .\update-source-map\update-source-map "$env:USERPROFILE\.codex\skills\update-source-map"
+Skills to install: drawio-diagram, help-me-read, minimax-image-understand, minimax-task-preflight, minimax-thorough-execution, minimax-web-search, mock-review, research-survey-loop, update-source-map.
 ```
 
-macOS / Linux 等价命令：
-
-```bash
-# 安装 minimax-image-understand
-cp -R ./minimax-image-understand "$HOME/.codex/skills/"
-
-# 安装 minimax-web-search
-cp -R ./minimax-web-search "$HOME/.codex/skills/"
-```
-
-如果你设置了 `CODEX_HOME`，也可以复制到 `$CODEX_HOME/skills/`。
+如果只安装单个 skill，也沿用同样的目录规则并缩短 skill 列表。不要安装外层 `<skill>/` 目录，否则中英文 README 会被复制进已安装的 skill。
 
 ### 两个 MiniMax MCP skill 的前置依赖
 
-`minimax-web-search` 和 `minimax-image-understand` 都会 spawn `uvx minimax-coding-plan-mcp` 来跟上游 server 通信。你需要在 `PATH` 上有 `uvx`：
+`minimax-web-search` 和 `minimax-image-understand` 都会 spawn `uvx minimax-coding-plan-mcp` 来跟上游 server 通信。`uvx`、MCP 和 key 的安装配置请参考 MiniMax Token Plan MCP guide：
 
-```bash
-# macOS
-brew install uv
-
-# Linux (Debian/Ubuntu)
-# 见 https://docs.astral.sh/uv/
-
-# Windows (PowerShell)
-iwr -useb https://astral.sh/uv/install.ps1 | iex
-```
+<https://platform.minimax.io/docs/token-plan/mcp-guide>
 
 两个 skill 自动从以下任一位置发现你的 MiniMax token plan key：
 - `$MINIMAX_API_KEY` 环境变量

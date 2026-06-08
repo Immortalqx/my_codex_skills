@@ -6,8 +6,6 @@ Chinese version: [README.zh-CN.md](./README.zh-CN.md)
 
 It is a narrow preflight layer used before execution. The skill reads a raw user request, identifies only the ambiguities that matter, asks concise follow-up questions when needed, and rewrites the request into a clearer prompt.
 
-The installable skill is in [minimax-task-preflight/](./minimax-task-preflight/).
-
 ## Important Boundary
 
 This skill is for **prompt clarification only**.
@@ -21,27 +19,6 @@ It must not:
 - optimize for token savings
 
 The goal is to help MiniMax M3 understand the request better before execution, not to let it pre-plan the later work.
-
-## Quick Start
-
-Copy the installable skill into `$CODEX_HOME/skills/`:
-
-```bash
-cp -R minimax-task-preflight "$CODEX_HOME/skills/"
-```
-
-Then ask Codex to use `$minimax-task-preflight` on a raw request:
-
-```text
-Use $minimax-task-preflight to read my raw request, ask only the necessary clarification questions, and rewrite it into a clearer prompt without planning how to execute it.
-```
-
-Example:
-
-```text
-Use $minimax-task-preflight for this request:
-"Read this paper carefully and explain it to me."
-```
 
 ## How It Works
 
@@ -83,6 +60,6 @@ Typical sequence:
 ## Repository Layout
 
 - `README.md` and `README.zh-CN.md`: repository docs
-- `minimax-task-preflight/`: installable Codex skill
+- `minimax-task-preflight/`: Codex skill files
 - `minimax-task-preflight/SKILL.md`: skill definition
 - `minimax-task-preflight/agents/`: agent config used by the skill

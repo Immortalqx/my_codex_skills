@@ -5,23 +5,6 @@ Chinese version: [README.zh-CN.md](./README.zh-CN.md)
 `research_survey_loop` is a Codex skill repository for long-running, multi-round survey workflows.
 It is mainly tuned for Robotics, Embodied AI, computer vision, world models, navigation, manipulation, and nearby topics.
 
-The installable skill is in [research-survey-loop/](./research-survey-loop/).
-
-## Quick Start
-
-Copy the skill into `$CODEX_HOME/skills/`:
-
-```bash
-cp -R research-survey-loop "$CODEX_HOME/skills/"
-```
-
-Then ask Codex to use `$research-survey-loop` for a topic and include any local notes, PDFs, or early findings if available.
-
-```text
-Use $research-survey-loop to survey recent work on world models for embodied navigation.
-I also have some local notes and PDFs in this workspace. Start round 1.
-```
-
 ## How It Works
 
 1. The user sends a prompt with a survey topic and optional local materials.
@@ -47,4 +30,4 @@ The skill maintains a persistent workflow under `survey_tasks/<topic-slug>/` and
 ## Repository Layout
 
 - `README.md` and `README.zh-CN.md`: repository docs
-- `research-survey-loop/`: the installable Codex skill
+- `research-survey-loop/`: Codex skill files

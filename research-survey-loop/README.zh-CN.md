@@ -5,17 +5,9 @@ English version: [README.md](./README.md)
 `research_survey_loop` 是一个用于长期、多轮调研流程的 Codex skill 仓库。
 它主要面向 Robotics、Embodied AI、计算机视觉、world models、navigation、manipulation 及其相邻方向。
 
-真正可安装的 skill 位于 [research-survey-loop/](./research-survey-loop/)。
-
 ## 快速开始
 
-把这个 skill 复制到 `$CODEX_HOME/skills/`：
-
-```bash
-cp -R research-survey-loop "$CODEX_HOME/skills/"
-```
-
-然后给 Codex 发消息，要求它使用 `$research-survey-loop` 调研某个主题；如果你本地已经有笔记、PDF 或初步结果，也可以一起提供。
+给 Codex 发消息，要求它使用 `$research-survey-loop` 调研某个主题；如果你本地已经有笔记、PDF 或初步结果，也可以一起提供。
 
 ```text
 Use $research-survey-loop to survey recent work on world models for embodied navigation.
@@ -47,4 +39,5 @@ Continue round 2 for the same topic based on current_task.md and round_log.md.
 ## 仓库结构
 
 - `README.md` 和 `README.zh-CN.md`：仓库说明文档
-- `research-survey-loop/`：真正用于安装的 Codex skill
+- `research-survey-loop/`：Codex 读取的 skill 文件目录
+

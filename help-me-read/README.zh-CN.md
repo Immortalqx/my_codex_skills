@@ -13,8 +13,6 @@
 - 所有来自 PDF 之外的事实都附原始链接
 - 写成带版本号的新文件，**绝不覆盖旧笔记**
 
-可安装的 skill 在 [help-me-read/](./help-me-read/)。
-
 ## 适用场景
 
 用户说以下任何一种时使用：
@@ -28,13 +26,7 @@
 
 ## 快速开始
 
-把 skill 复制到 `$CODEX_HOME/skills/`：
-
-```bash
-cp -R help-me-read "$CODEX_HOME/skills/"
-```
-
-然后让 Codex 用 `$help-me-read` 处理 PDF：
+让 Codex 用 `$help-me-read` 处理 PDF：
 
 ```text
 Use $help-me-read on this PDF: lecture7.pdf
@@ -81,16 +73,8 @@ Use Chinese for the note.
 ## 仓库结构
 
 - `README.md` / `README.zh-CN.md`：仓库说明（**给人看**）
-- `help-me-read/`：可安装的 Codex skill（**给 Codex 读**，全英文）
+- `help-me-read/`：Codex 读取的 skill 文件目录（全英文）
 - `help-me-read/SKILL.md`：skill 定义和工作流
 - `help-me-read/references/style-guide.md`：语气、术语翻译、章节规则
 - `help-me-read/assets/template.md`：空白精读笔记骨架
 - `help-me-read/agents/openai.yaml`：UI metadata
-
-## 编码说明
-
-**给 Codex 读的 skill 内部文件**（`SKILL.md`、`style-guide.md`、`template.md`、`agents/openai.yaml`、英文 `README.md`）一律全英文，避免编码歧义。
-
-**给人读的 `README.zh-CN.md`** 和 **最终用户要求的精读笔记**（中文为主）才会有中文。这两个文件用 Python 以 UTF-8（无 BOM）写入。
-
-**不要**用 Windows PowerShell 的 `Set-Content` 写中文到任何文件，它会**静默破坏**内容（GBK 误编码）。Python 的 `pathlib.Path.write_text(encoding='utf-8')` 是最稳的。
