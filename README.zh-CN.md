@@ -10,7 +10,7 @@
 
 - `minimax-task-preflight`：先读懂原始请求，必要时追问，再把请求改写成更清晰的 prompt，但不提前规划执行
 - `minimax-thorough-execution`：严格执行用户 prompt，防止执行时擅自改写任务、省 token 式缩任务、跳过图片核验、浅搜索和不贴链接
-- `minimax-web-search`：通过上游 `minimax-coding-plan-mcp` 的 `web_search` 工具调用网络搜索，token 来自用户自己的 MiniMax token plan key — 绕过 Codex 0.137.0 损坏的 MCP 集成（openai/codex#23186）
+- `minimax-web-search`：通过上游 `minimax-coding-plan-mcp` 的 `web_search` 工具调用网络搜索，token 来自用户自己的 MiniMax token plan key — 绕过 Codex 0.137.0 损坏的 MCP 集成（[openai/codex#23186](https://github.com/openai/codex/issues/23186)）
 - `minimax-image-understand`：通过上游 `minimax-coding-plan-mcp` 的 `understand_image` 工具做图像理解（描述 / 分析 / OCR），同样用 token plan key — 同样的 MCP 绕过方案
 
 `minimax-web-search` 和 `minimax-image-understand` 是**兄弟 skill**：完全独立（各自带自己的 `lib_key.py` + `mcp_client.py`），可以单独装/卸。它们都通过 JSON-RPC 调官方上游 MCP server，**结果与上游工具输出完全一致** — 中间没有 API 翻译层。
@@ -74,8 +74,7 @@ cp -R ./minimax-web-search "$HOME/.codex/skills/"
 
 ### 两个 MiniMax MCP skill 的前置依赖
 
-`minimax-web-search` 和 `minimax-image-understand` 都会 spawn
-`uvx minimax-coding-plan-mcp` 来跟上游 server 通信。你需要在 `PATH` 上有 `uvx`：
+`minimax-web-search` 和 `minimax-image-understand` 都会 spawn `uvx minimax-coding-plan-mcp` 来跟上游 server 通信。你需要在 `PATH` 上有 `uvx`：
 
 ```bash
 # macOS

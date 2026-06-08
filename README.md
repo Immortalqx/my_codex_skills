@@ -10,22 +10,12 @@ Several skills in this repository are specifically tuned for **MiniMax M3 used i
 
 - `minimax-task-preflight`: clarify a raw user request and rewrite it into a clearer prompt without pre-planning execution
 - `minimax-thorough-execution`: execute the user's prompt strictly, with explicit anti-shortcut, source-map, and completion-audit rules
-- `minimax-web-search`: web search via the upstream `minimax-coding-plan-mcp` `web_search` tool, using the user's MiniMax token-plan key — bypasses Codex 0.137.0's broken MCP integration (openai/codex#23186)
+- `minimax-web-search`: web search via the upstream `minimax-coding-plan-mcp` `web_search` tool, using the user's MiniMax token-plan key — bypasses Codex 0.137.0's broken MCP integration ([openai/codex#23186](https://github.com/openai/codex/issues/23186))
 - `minimax-image-understand`: image understanding (describe / analyze / OCR) via the upstream `minimax-coding-plan-mcp` `understand_image` tool, using the user's MiniMax token-plan key — same MCP workaround
 
-The two `minimax-web-search` / `minimax-image-understand` skills are siblings:
-they are **fully independent** (each ships its own `lib_key.py` + `mcp_client.py`),
-so you can install one without the other. They both call the official upstream
-MCP server via JSON-RPC, so the results match what the upstream tool produces
-exactly — no API translation layer in between.
+The two `minimax-web-search` / `minimax-image-understand` skills are siblings: they are **fully independent** (each ships its own `lib_key.py` + `mcp_client.py`), so you can install one without the other. They both call the official upstream MCP server via JSON-RPC, so the results match what the upstream tool produces exactly — no API translation layer in between.
 
-Both MiniMax MCP wrapper scripts are **stdout-only** for task results. They do
-not write search results, image-understanding results, logs, debug JSON, or
-business cache files to disk. If `--print` is used, the full JSON-RPC response
-is printed to stdout for Codex to read, not saved locally. Normal runtime caches
-from the Python interpreter (`__pycache__`) or from `uvx` / `uv` dependency
-management may still exist; those are toolchain side effects, not skill result
-artifacts.
+Both MiniMax MCP wrapper scripts are **stdout-only** for task results. They do not write search results, image-understanding results, logs, debug JSON, or business cache files to disk. If `--print` is used, the full JSON-RPC response is printed to stdout for Codex to read, not saved locally. Normal runtime caches from the Python interpreter (`__pycache__`) or from `uvx` / `uv` dependency management may still exist; those are toolchain side effects, not skill result artifacts.
 
 ## Skills
 
@@ -84,9 +74,7 @@ If `CODEX_HOME` is configured, copy the folders into `$CODEX_HOME/skills/` inste
 
 ### Prerequisite for the two MiniMax MCP skills
 
-`minimax-web-search` and `minimax-image-understand` both spawn
-`uvx minimax-coding-plan-mcp` to talk to the upstream server. You need
-`uvx` on your `PATH`:
+`minimax-web-search` and `minimax-image-understand` both spawn `uvx minimax-coding-plan-mcp` to talk to the upstream server. You need `uvx` on your `PATH`:
 
 ```bash
 # macOS
@@ -106,12 +94,7 @@ The two skills auto-discover your MiniMax token-plan key from any of:
 
 No additional configuration is needed if any of those already hold your key.
 
-Runtime note: the MiniMax wrapper scripts themselves do not persist search or
-image-understanding outputs. They only print to stdout. CPython may still create
-`__pycache__` bytecode files when scripts run, and `uvx` / `uv` may use its own
-dependency cache (for example under the user's uv cache directory). Those caches
-are normal interpreter/package-manager behavior and are not generated result
-files from these skills.
+Runtime note: the MiniMax wrapper scripts themselves do not persist search or image-understanding outputs. They only print to stdout. CPython may still create `__pycache__` bytecode files when scripts run, and `uvx` / `uv` may use its own dependency cache (for example under the user's uv cache directory). Those caches are normal interpreter/package-manager behavior and are not generated result files from these skills.
 
 ## Notes
 
