@@ -1,36 +1,36 @@
-# {{TOPIC}} 综述
+# {{TOPIC}} Survey
 
-## 综述主题与目标
+## Survey Topic and Goals
 
-- 主题：{{TOPIC}}
-- 任务目录：`{{TASK_DIR_REL}}`
-- 写作语言：中文为主，保留必要英文术语、论文标题与 venue 名称
-- 写作方式：以分类综述段落持续追加，而不是逐论文卡片堆叠
+- Topic: {{TOPIC}}
+- Task directory: `{{TASK_DIR_REL}}`
+- Writing language: target language is the same as the user's request; preserve English titles, venues, and technical terms
+- Writing style: continuously append category-survey paragraphs, not stack per-paper cards
 
-## 检索范围与来源说明
+## Search Scope and Source Notes
 
-- 默认优先来源：Nature / Science 及相关子刊、Top CV venues、Top robotics venues、arXiv
-- 本地论文来源：任务目录 `./sources/papers/` 内文件，以及待迁移的根目录 `papers/`
-- 引用规范：本地资源使用相对路径；无法下载的来源使用网络链接
+- Default priority sources: Nature / Science and related journals, top CV venues, top robotics venues, arXiv
+- Local paper sources: files in task directory `./sources/papers/`, plus root `papers/` pending migration
+- Citation conventions: local resources use relative paths; sources that cannot be downloaded use web links
 
-## 分类地图
+## Category Map
 
-- 待建立
+- TBD
 
-## 分类综述主体
+## Category Survey Body
 
-### 1. 综述与领域全景
+### 1. Survey and Field Overview
 
-待补充。
+TBD.
 
-### 2. 方法分类待补充
+### 2. Method Classification (TBD)
 
-待补充。
+TBD.
 
-## 待深读与待补证据
+## Pending Deep Reading and Evidence
 
-- 待补充
+- TBD
 
-## 参考链接
+## Reference Links
 
-- 暂无
+- None

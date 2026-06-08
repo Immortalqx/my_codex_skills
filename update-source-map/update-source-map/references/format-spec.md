@@ -52,7 +52,7 @@ Top-level keys:
       "chars": 7399,
       "words": 727,
       "lines": 122,
-      "h2_titles": ["一、...", "二、..."],
+      "h2_titles": ["Section 1: ...", "Section 2: ..."],
       "h3_titles": ["1.1 ...", "1.2 ..."],
       "h2_count": 5,
       "h3_count": 0

@@ -1,46 +1,46 @@
-# 当前任务：{{TOPIC}}
+# Current Task: {{TOPIC}}
 
-## 当前任务目标
+## Current Task Goal
 
-- 为 `./survey.md` 建立或扩充稳定的分类综述结构
-- 优先完成高价值来源的检索、迁移、深读与归纳
+- Build or extend a stable category-survey structure for `./survey.md`
+- Prioritize search, migration, deep reading, and synthesis of high-value sources
 
-## 本轮必须完成
+## This Round Must Complete
 
-- 完成一轮 web-first 搜索
-- 更新 `survey.md` 的分类地图或分类综述段落
-- 列出最优先的深读论文及其页窗计划
+- Complete one round of web-first search
+- Update the category map or category-survey paragraphs in `survey.md`
+- List the highest-priority papers for deep reading with their page windows
 
-## 搜索队列
+## Search Queue
 
-- Nature / Science 及相关子刊中的直接相关工作
-- Top CV venues 中与主题直接相关的论文
-- Top robotics venues 中与主题直接相关的论文
-- arXiv 上的最新补充工作
+- Direct work in Nature / Science and related journals
+- Papers in top CV venues directly related to the topic
+- Papers in top robotics venues directly related to the topic
+- Latest supplementary work on arXiv
 
-## 阅读队列
+## Reading Queue
 
-- 待补充
+- TBD
 
-## 本地待迁移论文
+## Local Papers Pending Migration
 
-- 从工作区根目录 `papers/` 中挑选与主题直接相关的 PDF
-- 被本任务真正吸收后，移动到 `./sources/papers/`
+- Select PDFs directly related to the topic from workspace root `papers/`
+- After being truly absorbed by this task, move to `./sources/papers/`
 
-## PDF 分段计划
+## PDF Chunking Plan
 
-| 论文 | 相对路径或链接 | 本轮页窗 | 目标 |
+| Paper | Relative path or link | This round's page window | Goal |
 | --- | --- | --- | --- |
-| 待补充 | 待补充 | 1-10 | 建立问题定义与贡献理解 |
+| TBD | TBD | 1-10 | Establish problem definition and contribution understanding |
 
-## 本轮要写入 `survey.md` 的分类段落
+## Category Paragraphs to Write into `survey.md` This Round
 
-- 待补充
+- TBD
 
-## 已知阻塞
+## Known Blockers
 
-- 暂无
+- None
 
-## 下一轮起始动作
+## Next Round's Starting Action
 
-- 读取 `task.md`、`round_log.md` 最新条目、`survey.md` 和本文件，然后继续执行。
+- Read `task.md`, the latest entry in `round_log.md`, `survey.md`, and this file, then continue execution.

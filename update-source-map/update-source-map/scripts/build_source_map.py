@@ -30,6 +30,16 @@ import sys
 from pathlib import Path
 
 
+# Force UTF-8 on stdout/stderr so non-ASCII paths / content never crash
+# the parent process when this script is invoked via subprocess on
+# Windows code pages like GBK / cp936.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
+
 # --- Section: size formatting ---
 def sz(b):
     if b < 1024:
@@ -129,20 +139,20 @@ def build_markdown(workspace_root, inventory, totals, curated, mode, prev_invent
         added = sorted(cur_paths - prev_paths)
         removed = sorted(prev_paths - cur_paths)
         if added or removed:
-            diff_block = "\n## 0. 增量变化（仅 update 模式）\n\n"
+            diff_block = "\n## 0. Incremental Changes (update mode only)\n\n"
             if added:
-                diff_block += f"**新增 {len(added)} 个文件**：\n\n"
+                diff_block += f"**{len(added)} files added**:\n\n"
                 for p in added[:20]:
                     diff_block += f"- `{p}`\n"
                 if len(added) > 20:
-                    diff_block += f"- ... 还有 {len(added) - 20} 个\n"
+                    diff_block += f"- ... and {len(added) - 20} more\n"
                 diff_block += "\n"
             if removed:
-                diff_block += f"**删除 {len(removed)} 个文件**：\n\n"
+                diff_block += f"**{len(removed)} files removed**:\n\n"
                 for p in removed[:20]:
                     diff_block += f"- `{p}`\n"
                 if len(removed) > 20:
-                    diff_block += f"- ... 还有 {len(removed) - 20} 个\n"
+                    diff_block += f"- ... and {len(removed) - 20} more\n"
                 diff_block += "\n"
 
     # Header
@@ -160,24 +170,24 @@ def build_markdown(workspace_root, inventory, totals, curated, mode, prev_invent
     # TL;DR
     md.append("---")
     md.append("")
-    md.append("## TL;DR — 5 行读懂这个 workspace")
+    md.append("## TL;DR - 5-line workspace summary")
     md.append("")
     if mode == "create":
-        md.append("- 这是**新建**的 source map（之前不存在）")
+        md.append("- This is a **new** source map (no prior version)")
     else:
-        md.append("- 这是**更新后**的 source map（之前已存在）")
-    md.append(f"- 共 **{totals['files_total']} 个文件**（{totals['md_files']} .md + {totals['pdf_files']} .pdf）")
-    md.append("- 下面的章节逐文件夹展开 + 全文件清单 + 交叉引用")
-    md.append("- Agent 找内容：先看 TL;DR → 看文件夹章节 → 跳到对应 .md / .pdf")
-    md.append("- 维护：编辑 `curated_summaries.json` 可手写每个文件的 1 行说明（跨更新保留）")
+        md.append("- This is an **updated** source map (prior version existed)")
+    md.append(f"- **{totals['files_total']} files total** ({totals['md_files']} .md + {totals['pdf_files']} .pdf)")
+    md.append("- The following sections break down by folder + full file inventory + cross-references")
+    md.append("- Agent navigation: TL;DR -> folder sections -> jump to the .md / .pdf")
+    md.append("- Maintenance: edit `curated_summaries.json` to hand-write a 1-line description per file (preserved across updates)")
     md.append("")
 
     # Top-level rollup table
     md.append("---")
     md.append("")
-    md.append("## 1. 顶层目录速览")
+    md.append("## 1. Top-Level Directory Overview")
     md.append("")
-    md.append("| 文件夹 | 大小 | MD 数 | PDF 数 |")
+    md.append("| Folder | Size | MD count | PDF count |")
     md.append("|---|---|---|---|")
     rollups = compute_top_rollups(inventory)
     for fldr in sorted(rollups.keys()):
@@ -186,7 +196,7 @@ def build_markdown(workspace_root, inventory, totals, curated, mode, prev_invent
     md.append("")
 
     # Visual tree
-    md.append("### 视觉化目录树（带大小）")
+    md.append("### Visual Directory Tree (with sizes)")
     md.append("")
     md.append("```text")
     tree = build_tree(inventory)
@@ -198,11 +208,11 @@ def build_markdown(workspace_root, inventory, totals, curated, mode, prev_invent
     # Per-folder detail
     md.append("---")
     md.append("")
-    md.append("## 2. 逐文件夹深读")
+    md.append("## 2. Per-Folder Deep Dive")
     md.append("")
     for folder in sorted(files_by_folder.keys()):
         if folder == "_root_":
-            md.append("### 2.X 项目根")
+            md.append("### 2.X Project Root")
             md.append("")
             for r in files_by_folder[folder]:
                 summary = curated.get(r["rel_path"], "")
@@ -217,7 +227,7 @@ def build_markdown(workspace_root, inventory, totals, curated, mode, prev_invent
             for r in files_by_folder[folder]:
                 summary = curated.get(r["rel_path"], "(no curated summary)")
                 if r["type"] == "MD":
-                    md.append(f"- `{r['filename']}` — {r.get('words', 0):,} 词, {r.get('h2_count', 0)} H2 — {summary}")
+                    md.append(f"- `{r['filename']}` — {r.get('words', 0):,} words, {r.get('h2_count', 0)} H2 — {summary}")
                 else:
                     md.append(f"- `{r['filename']}` ({sz(r['size_bytes'])}) — {summary}")
             md.append("")
@@ -225,18 +235,18 @@ def build_markdown(workspace_root, inventory, totals, curated, mode, prev_invent
     # Full file inventory
     md.append("---")
     md.append("")
-    md.append("## 3. 完整文件清单")
+    md.append("## 3. Complete File Inventory")
     md.append("")
-    md.append("### 3.1 所有 Markdown 笔记")
+    md.append("### 3.1 All Markdown Notes")
     md.append("")
-    md.append("| 路径 | 词数 | H2 | H3 | 字数 | 修改时间 |")
+    md.append("| Path | Words | H2 | H3 | Chars | Modified |")
     md.append("|---|---|---|---|---|---|")
     for r in sorted([f for f in inventory if f["type"] == "MD" and not f["rel_path"].startswith("x_temp")], key=lambda x: x["rel_path"]):
         md.append(f"| `{r['rel_path']}` | {r.get('words', 0):,} | {r.get('h2_count', 0)} | {r.get('h3_count', 0)} | {r.get('chars', 0):,} | {r['mtime']} |")
     md.append("")
-    md.append("### 3.2 所有 PDF 文件")
+    md.append("### 3.2 All PDF Files")
     md.append("")
-    md.append("| 路径 | 大小 | 修改时间 |")
+    md.append("| Path | Size | Modified |")
     md.append("|---|---|---|")
     for r in sorted([f for f in inventory if f["type"] == "PDF"], key=lambda x: x["rel_path"]):
         md.append(f"| `{r['rel_path']}` | {sz(r['size_bytes'])} | {r['mtime']} |")
@@ -245,25 +255,25 @@ def build_markdown(workspace_root, inventory, totals, curated, mode, prev_invent
     # Conventions
     md.append("---")
     md.append("")
-    md.append("## 4. 约定")
+    md.append("## 4. Conventions")
     md.append("")
-    md.append("- **本文件是只读快照**——agent 不修改它")
-    md.append("- **手写维护**：`curated_summaries.json` 跟 source_map.json 同目录")
-    md.append("- **不读 PDF 内容**：PDF 只用 metadata（大小/时间），用途从邻近 README 推断")
-    md.append("- **不索引嵌入图**（`*.assets/`、`*.images/`）")
-    md.append("- **不修改受保护文件**（文件名含 'no modify' / 'no-edit' / 'readonly' 的文件 agent 必须跳过）")
+    md.append("- **This file is a read-only snapshot** - the agent does not modify it")
+    md.append("- **Hand-written maintenance**: `curated_summaries.json` lives next to `source_map.json`")
+    md.append("- **No PDF content read**: PDFs use metadata only (size/mtime); purpose inferred from neighboring README")
+    md.append("- **No embedded images indexed** (`*.assets/`, `*.images/`)")
+    md.append("- **Do not modify protected files** (filenames containing 'no modify' / 'no-edit' / 'readonly' must be skipped by the agent)")
     md.append("")
 
     # Meta
     md.append("---")
     md.append("")
-    md.append("## 5. 元信息")
+    md.append("## 5. Meta")
     md.append("")
-    md.append(f"- 生成时间：{datetime.datetime.now().isoformat(timespec='seconds')}")
-    md.append(f"- 模式：{mode}")
-    md.append(f"- 总文件：{totals['files_total']} (MD: {totals['md_files']}, PDF: {totals['pdf_files']})")
-    md.append(f"- 总字数（.md）：{sum(r.get('words', 0) for r in inventory if r['type']=='MD'):,}")
-    md.append(f"- 总 H2：{sum(r.get('h2_count', 0) for r in inventory if r['type']=='MD')}")
+    md.append(f"- Generated at: {datetime.datetime.now().isoformat(timespec='seconds')}")
+    md.append(f"- Mode: {mode}")
+    md.append(f"- Total files: {totals['files_total']} (MD: {totals['md_files']}, PDF: {totals['pdf_files']})")
+    md.append(f"- Total word count (.md): {sum(r.get('words', 0) for r in inventory if r['type']=='MD'):,}")
+    md.append(f"- Total H2: {sum(r.get('h2_count', 0) for r in inventory if r['type']=='MD')}")
     md.append("")
     md.append("**End of source map.**")
     md.append("")
@@ -337,7 +347,7 @@ def main():
     final_size = os.path.getsize(args.md_out)
     md_content = md_content.replace(
         "**End of source map.**",
-        f"- 本文件大小：{sz(final_size)} ({final_size:,} bytes)\n\n**End of source map.**"
+        f"- This file size: {sz(final_size)} ({final_size:,} bytes)\n\n**End of source map.**"
     )
     Path(args.md_out).write_text(md_content, encoding="utf-8")
 

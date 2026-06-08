@@ -15,7 +15,6 @@ Trigger on requests like:
 - "build a source map for this project"
 - "update the source map"
 - "create a project index"
-- "扫描这个文件夹，给我一份目录索引"
 - any task where Codex is about to do work in a workspace it doesn't already know well
 
 Do **not** trigger for: code refactoring, single-file edits, paper reading, or tasks unrelated to project navigation.

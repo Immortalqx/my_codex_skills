@@ -1,65 +1,65 @@
-# 任务文档：{{TOPIC}}
+# Task Document: {{TOPIC}}
 
-## 任务定义
+## Task Definition
 
-- 主题：{{TOPIC}}
-- 任务标识：{{TOPIC_SLUG}}
-- 创建时间：{{CREATED_AT}}
-- 工作区根目录：{{WORKSPACE_ROOT}}
-- 任务目录：{{TASK_DIR}}
+- Topic: {{TOPIC}}
+- Task slug: {{TOPIC_SLUG}}
+- Created at: {{CREATED_AT}}
+- Workspace root: {{WORKSPACE_ROOT}}
+- Task directory: {{TASK_DIR}}
 
-## 核心目标
+## Core Goals
 
-- 产出一份可长期追加的中文 Markdown 综述：`./survey.md`
-- 调研范围默认聚焦具身智能、计算机视觉、机器人及其交叉方向
-- 优先从网络检索高质量正式来源，再补充 arXiv 与本地论文池
+- Produce a long-running, append-only Markdown survey at `./survey.md`
+- Default research scope: embodied AI, computer vision, robotics, and adjacent topics
+- Prefer formal published sources from the web first; supplement with arXiv and the local papers pool
 
-## 固定约束
+## Fixed Constraints
 
-- `task.md` 默认保持稳定，除非用户明确要求修改任务本身
-- `round_log.md` 只追加，不回改历史
-- `current_task.md` 每轮结束后重写
-- `survey.md` 只做分类段落式追加，不生成“每篇论文一张卡片”
-- 所有本地引用必须使用相对路径
-- 无法下载的来源使用网络链接
-- 单次 PDF 阅读不得超过 10 页
+- `task.md` stays stable by default; only modify it when the user explicitly changes the task itself
+- `round_log.md` is append-only; do not rewrite history
+- `current_task.md` is rewritten at the end of each round
+- `survey.md` grows by category paragraphs only; do not produce per-paper cards
+- All local citations must use relative paths
+- Use web links for sources that cannot be downloaded
+- Never read more than 10 PDF pages in a single pass
 
-## 优先来源
+## Priority Sources
 
-- Nature / Science 及相关子刊
+- Nature / Science and related journals
 - CVPR / ICCV / ECCV / TPAMI / IJCV
 - Science Robotics / IJRR / TRO / RA-L / RSS / ICRA / CoRL / IROS
 - arXiv
-- 当前工作区根目录 `papers/` 中与任务直接相关的本地 PDF
+- Local PDFs in workspace root `papers/` that are directly related to the task
 
-## 纳入标准
+## Inclusion Criteria
 
-- 论文必须与主题直接相关，或对分类地图、术语统一、方法比较有明确价值
-- 写入 `survey.md` 前必须明确理解研究问题、核心方法、主要贡献、关键局限
-- 本地 `papers/` 中被任务吸收的论文必须迁移到 `./sources/papers/`
+- Papers must be directly related to the topic, or provide clear value for category mapping, terminology unification, or method comparison
+- Before writing into `survey.md`, clearly understand: research problem, core method, main contribution, key limitation
+- Papers in local `papers/` absorbed by the task must be migrated to `./sources/papers/`
 
-## 排除项
+## Exclusions
 
-- 与主题明显无关的论文
-- 只看标题或局部摘要却未读懂就写成确定结论的内容
-- 继续引用根目录 `papers/` 作为综述中的 canonical path
-- 未经用户明确要求时，将 `industry_report/` 混入学术主综述
+- Papers clearly unrelated to the topic
+- Content written as firm conclusions after only reading the title or partial abstract
+- Continuing to cite root `papers/` as canonical paths in `survey.md`
+- Mixing `industry_report/` into the academic main survey without explicit user request
 
-## 输出要求
+## Output Requirements
 
-- 主综述文件：`./survey.md`
-- 轮次记录：`./round_log.md`
-- 当前任务：`./current_task.md`
-- 论文与补充材料：`./sources/`
+- Main survey file: `./survey.md`
+- Round log: `./round_log.md`
+- Current task: `./current_task.md`
+- Papers and supplementary material: `./sources/`
 
-## 初始分类建议
+## Initial Classification Suggestions
 
-- 先建立粗粒度分类，再逐步细化
-- 示例：综述与领域全景 / world models / spatial memory / 3D scene representation / navigation / manipulation / benchmarks / evaluation
+- Start with coarse categories, then refine progressively
+- Example categories: survey and field overview / world models / spatial memory / 3D scene representation / navigation / manipulation / benchmarks / evaluation
 
-## 质量标准
+## Quality Standards
 
-- 结论可追溯到本地 PDF 或网络链接
-- 术语前后一致
-- 每轮都有明确的下一轮入口
-- 分类结构逐步变清晰，而不是越写越散
+- Conclusions traceable to a local PDF or web link
+- Consistent terminology across rounds
+- Each round has a clear next-round entry point
+- Classification structure becomes progressively clearer, not more scattered
