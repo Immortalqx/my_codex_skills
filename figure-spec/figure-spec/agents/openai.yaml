@@ -1,4 +1,0 @@
-interface:
-  display_name: "FigureSpec SVG Diagrams"
-  short_description: "Render structured JSON to SVG"
-  default_prompt: "Use $figure-spec to create a deterministic editable SVG architecture or workflow diagram from a structured spec."

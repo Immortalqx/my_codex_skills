@@ -1,0 +1,4 @@
+interface:
+  display_name: "MiniMax CLI"
+  short_description: "Use local mmx for MiniMax tasks"
+  default_prompt: "Use $mmx-cli to operate the local MiniMax CLI for text, search, vision, quota, file, and media tasks. Prefer non-interactive JSON output and bilingual multi-query search."
