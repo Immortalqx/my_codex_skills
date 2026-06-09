@@ -1,4 +1,0 @@
-interface:
-  display_name: "MiniMax Web Search"
-  short_description: "Web search via MiniMax token-plan key (bypasses Codex MCP bug)"
-  default_prompt: "Use $minimax-web-search to search the web via the upstream minimax-coding-plan-mcp web_search tool using the user's MiniMax token-plan key, and return the top results as a numbered list with title, link, and snippet."

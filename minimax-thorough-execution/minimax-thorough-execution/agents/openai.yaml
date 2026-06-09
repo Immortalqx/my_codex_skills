@@ -1,4 +1,0 @@
-interface:
-  display_name: "MiniMax Thorough Execution"
-  short_description: "Execute the user's prompt strictly and with full scope"
-  default_prompt: "Use $minimax-thorough-execution to execute my prompt exactly as written, without rewriting it, shrinking scope, scattering temp artifacts, skipping skill discovery, guessing from text instead of inspecting images, or omitting source links."

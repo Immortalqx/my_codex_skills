@@ -1,4 +1,0 @@
-interface:
-  display_name: "MiniMax Task Preflight"
-  short_description: "Clarify a raw user request with concise follow-up questions"
-  default_prompt: "Use $minimax-task-preflight to read my raw request, ask only the necessary clarification questions, and rewrite it into a clearer prompt without planning how to execute it."

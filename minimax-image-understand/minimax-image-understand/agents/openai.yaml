@@ -1,4 +1,0 @@
-interface:
-  display_name: "MiniMax Image Understanding"
-  short_description: "Image understand via MiniMax token-plan key"
-  default_prompt: "Use $minimax-image-understand to describe, OCR, or analyze the given image via the upstream minimax-coding-plan-mcp understand_image tool using the user's MiniMax token-plan key."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "arXiv Paper Fetch"
+  short_description: "Search and download arXiv papers"
+  default_prompt: "Use $arxiv to search arXiv and download relevant paper PDFs into the local paper library."
