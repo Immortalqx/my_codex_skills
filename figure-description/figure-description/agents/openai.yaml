@@ -1,0 +1,4 @@
+interface:
+  display_name: "Patent Figure Description"
+  short_description: "Describe patent figures formally"
+  default_prompt: "Use $figure-description to process patent figures and generate formal drawing descriptions with reference numerals."

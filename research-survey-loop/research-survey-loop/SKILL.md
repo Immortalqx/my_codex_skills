@@ -1,7 +1,6 @@
 ---
 name: research-survey-loop
 description: Long-running survey workflow for robotics, embodied AI, computer vision, world models, navigation, manipulation, 3D scene understanding, and adjacent research. Use when Codex needs to create or continue a multi-round literature review task, maintain stable task documents (`task.md`, `round_log.md`, `current_task.md`, `survey.md`), search Nature/Science plus top CV and robotics venues before arXiv, migrate relevant local PDFs from `papers/` into task-local `sources/`, read PDFs in chunks of at most 10 pages, and incrementally write a Chinese Markdown survey with relative local citations or web links.
-allowed-tools: Bash(*), Read, Glob, Grep, WebSearch, WebFetch, Write, Agent, mcp__zotero__*, mcp__obsidian-vault__*
 ---
 
 # Research Survey Loop
@@ -72,7 +71,7 @@ Use these bundled templates and scripts instead of improvising new file layouts:
 If the task directory does not exist, run:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/research-survey-loop/scripts/init_task.py" "TOPIC" --workspace-root "$PWD"
+python3 scripts/init_task.py "TOPIC" --workspace-root "$PWD"
 ```
 
 If the task already exists, read in this order before doing any new work:
@@ -94,13 +93,13 @@ Default search order is fixed:
 4. arXiv
 5. Local `papers/` pool as supplement, de-dup, or migration source
 
-Use `WebSearch` and `WebFetch` for publisher-first searching. Use `scripts/fetch_sources.py` to normalize downloads and imports into the task directory.
+Use the current agent's web search / fetch capabilities for publisher-first searching. Use `scripts/fetch_sources.py` to normalize downloads and imports into the task directory.
 
 Typical commands:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/research-survey-loop/scripts/fetch_sources.py" search "TOPIC" --task-dir "survey_tasks/TOPIC-SLUG" --max-per-source 5
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/research-survey-loop/scripts/fetch_sources.py" download --task-dir "survey_tasks/TOPIC-SLUG" --arxiv-id 2402.07556
+python3 scripts/fetch_sources.py search "TOPIC" --task-dir "survey_tasks/TOPIC-SLUG" --max-per-source 5
+python3 scripts/fetch_sources.py download --task-dir "survey_tasks/TOPIC-SLUG" --arxiv-id 2402.07556
 ```
 
 Search rules:
@@ -108,8 +107,8 @@ Search rules:
 - Prefer official publisher or venue pages over tertiary summaries.
 - Prefer formal published versions over arXiv when both exist.
 - Keep arXiv as a rapid frontier source and fallback download source.
-- When `EXA_API_KEY` is configured, `fetch_sources.py search` can probe priority publisher domains automatically.
-- If Exa is unavailable, continue with Semantic Scholar and arXiv rather than blocking.
+- The bundled `fetch_sources.py search` command uses public Semantic Scholar and arXiv APIs for normalized results.
+- If one source is unavailable, continue with the others rather than blocking.
 
 ### 3. Import and Migrate Local Papers
 
@@ -118,13 +117,13 @@ Only migrate local PDFs that the current task actually absorbs.
 To move a root-level paper into the task:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/research-survey-loop/scripts/fetch_sources.py" import-local --task-dir "survey_tasks/TOPIC-SLUG" "papers/file.pdf"
+python3 scripts/fetch_sources.py import-local --task-dir "survey_tasks/TOPIC-SLUG" "papers/file.pdf"
 ```
 
 To reuse a paper from another survey task:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/research-survey-loop/scripts/fetch_sources.py" reuse-task-paper --task-dir "survey_tasks/TOPIC-SLUG" --from-task "survey_tasks/OTHER-TASK" "sources/papers/file.pdf"
+python3 scripts/fetch_sources.py reuse-task-paper --task-dir "survey_tasks/TOPIC-SLUG" --from-task "survey_tasks/OTHER-TASK" "sources/papers/file.pdf"
 ```
 
 Migration rules:
@@ -141,7 +140,7 @@ Never read more than 10 PDF pages at once.
 Use:
 
 ```bash
-python3 "${CODEX_HOME:-$HOME/.codex}/skills/research-survey-loop/scripts/extract_pdf_chunk.py" "survey_tasks/TOPIC-SLUG/sources/papers/file.pdf" --start-page 1 --end-page 10 --json
+python3 scripts/extract_pdf_chunk.py "survey_tasks/TOPIC-SLUG/sources/papers/file.pdf" --start-page 1 --end-page 10 --json
 ```
 
 Rules:
@@ -196,7 +195,7 @@ Default language is Chinese, while preserving English titles, venues, and techni
 ## Failure Handling
 
 - If a source cannot be downloaded, keep the best canonical URL and continue.
-- If Exa or Semantic Scholar credentials are unavailable, keep working with the remaining sources.
+- If Semantic Scholar or arXiv access is temporarily unavailable, keep working with the remaining sources.
 - If a PDF is longer than expected, continue chunked reading rather than skipping it.
 - If a paper is relevant but still unclear, mark it as pending instead of writing a fake summary.
 - If a task directory already exists, preserve `task.md` by default and only recreate missing files.

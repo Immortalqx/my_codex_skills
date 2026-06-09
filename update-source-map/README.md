@@ -2,9 +2,9 @@
 
 Chinese version: [README.zh-CN.md](./README.zh-CN.md)
 
-`update_source_map` is a Codex skill that creates or updates an **agent-readable source map** for any project directory.
+`update_source_map` is a Codex skill that creates or updates a **structured source map** for any project directory.
 
-The source map is a structured index of a project's files (`.md` notes + `.pdf` documents), with one-line summaries per file, file sizes, modification times, and a heading skeleton for every markdown file. It is designed so that an AI agent (or a human) can quickly answer "what's in this project, and where do I find X?" without reading every file.
+The source map is a structured index of a project's files (`.md` notes + `.pdf` documents), with one-line summaries per file, file sizes, modification times, and a heading skeleton for every markdown file. It is designed so that a human or tool can quickly answer "what's in this project, and where do I find X?" without reading every file.
 
 The skill auto-detects whether a source map already exists in the workspace:
 - **Create** mode: builds a new `SOURCE_MAP.md` + `source_map.json` from scratch
@@ -15,7 +15,7 @@ The skill auto-detects whether a source map already exists in the workspace:
 - When starting work in a new / unfamiliar workspace
 - When files have been added / removed / renamed and the existing index is stale
 - When preparing context for a multi-turn task that touches many files
-- When handing a project over to another agent who needs navigation help
+- When later work needs a reusable navigation index
 
 ## What it produces
 
@@ -34,7 +34,7 @@ This skill is for **navigation and inventory**, not for:
 - Refactoring or editing files
 - Running experiments
 
-The source map tells the agent what's in the project and where to look. It does not replace the actual files.
+The source map tells you what is in the project and where to look. It does not replace the actual files.
 
 ## Source
 

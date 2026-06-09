@@ -2,9 +2,9 @@
 
 [English](./README.md) | 中文
 
-`update_source_map` 是一个 Codex skill，用于为任意项目目录**创建或更新**一份 agent 可读的 source map。
+`update_source_map` 是一个 Codex skill，用于为任意项目目录**创建或更新**一份结构化 source map。
 
-Source map 是一份对项目文件（`.md` 笔记 + `.pdf` 文档）的结构化索引，包含每个文件的 1 行摘要、文件大小、修改时间，以及每个 markdown 文件的标题骨架。它让 AI agent（或人）能快速回答"这个项目里有什么？X 在哪里？"而无需逐个读取文件。
+Source map 是一份对项目文件（`.md` 笔记 + `.pdf` 文档）的结构化索引，包含每个文件的 1 行摘要、文件大小、修改时间，以及每个 markdown 文件的标题骨架。它让人或工具都能快速回答“这个项目里有什么？X 在哪里？”而无需逐个读取文件。
 
 Skill 会自动检测 workspace 中是否已经存在 source map：
 - **Create** 模式：从零生成 `SOURCE_MAP.md` + `source_map.json`
@@ -15,7 +15,7 @@ Skill 会自动检测 workspace 中是否已经存在 source map：
 - 开始处理一个新的 / 不熟悉的 workspace 时
 - 文件被增删改，原索引已过期时
 - 为多轮任务准备上下文（任务会触碰很多文件）时
-- 把项目交给另一个 agent、需要给 ta 提供导航时
+- 需要给后续工作保留一份可复用导航索引时
 
 ## 它会产出什么
 
@@ -23,7 +23,7 @@ Skill 会自动检测 workspace 中是否已经存在 source map：
 
 | 文件 | 格式 | 用途 |
 |---|---|---|
-| `SOURCE_MAP.md` | Markdown | 主交付物 — 人 + agent 都能读 |
+| `SOURCE_MAP.md` | Markdown | 主交付物 — 人和工具都能读 |
 | `source_map.json` | JSON | 结构化数据 — 程序化查询用 |
 | `curated_summaries.json` | JSON | 手写的 per-file 摘要（跨更新保留） |
 
@@ -48,7 +48,7 @@ python3 update-source-map/scripts/regenerate.py /path/to/workspace
 - 重构或编辑文件
 - 跑实验
 
-Source map 告诉 agent 项目里有什么、在哪里找。它不替代原始文件。
+Source map 告诉你项目里有什么、在哪里找。它不替代原始文件。
 
 ## 来源
 

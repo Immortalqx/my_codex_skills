@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Lit"
+  short_description: "Search and synthesize research literature"
+  default_prompt: "Use $research-lit to find, compare, and summarize research papers for this topic."

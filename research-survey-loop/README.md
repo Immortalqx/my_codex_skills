@@ -2,8 +2,7 @@
 
 Chinese version: [README.zh-CN.md](./README.zh-CN.md)
 
-`research_survey_loop` is a Codex skill repository for long-running, multi-round survey workflows.
-It is mainly tuned for Robotics, Embodied AI, computer vision, world models, navigation, manipulation, and nearby topics.
+`research_survey_loop` is a standalone Codex skill repository for long-running, multi-round survey workflows. It is mainly tuned for Robotics, Embodied AI, computer vision, world models, navigation, manipulation, and nearby topics.
 
 ## How It Works
 
@@ -17,6 +16,17 @@ Example follow-up:
 ```text
 Continue round 2 for the same topic based on current_task.md and round_log.md.
 ```
+
+## Source Strategy
+
+The skill combines:
+
+- task-local and workspace-local PDFs,
+- public web search and official venue / publisher pages,
+- bundled helper scripts for task initialization, source normalization, and chunked PDF reading,
+- public Semantic Scholar and arXiv APIs for normalized metadata when needed.
+
+The default path stays within one agent plus bundled local scripts and public web sources.
 
 ## Output
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Proof Writer"
+  short_description: "Write rigorous proofs for ML and AI theory"
+  default_prompt: "Use $proof-writer to write or repair a rigorous proof for the theorem, lemma, or proposition I provide."

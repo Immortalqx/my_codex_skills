@@ -1,0 +1,4 @@
+interface:
+  display_name: "Formula Derivation"
+  short_description: "Build paper-ready derivations"
+  default_prompt: "Use $formula-derivation to structure this research formula derivation and clarify assumptions."

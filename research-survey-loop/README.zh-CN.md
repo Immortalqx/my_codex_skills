@@ -2,8 +2,7 @@
 
 English version: [README.md](./README.md)
 
-`research_survey_loop` 是一个用于长期、多轮调研流程的 Codex skill 仓库。
-它主要面向 Robotics、Embodied AI、计算机视觉、world models、navigation、manipulation 及其相邻方向。
+`research_survey_loop` 是一个独立的 Codex skill 仓库，用于长期、多轮调研流程。它主要面向 Robotics、Embodied AI、计算机视觉、world models、navigation、manipulation 及其相邻方向。
 
 ## 快速开始
 
@@ -26,6 +25,17 @@ I also have some local notes and PDFs in this workspace. Start round 1.
 ```text
 Continue round 2 for the same topic based on current_task.md and round_log.md.
 ```
+
+## 来源策略
+
+这个 skill 会结合：
+
+- 工作区和 task 本地已有的 PDF，
+- 公共网页检索与官方 venue / publisher 页面，
+- 随 skill 打包的任务初始化、资料归档和分块读 PDF 脚本，
+- 公共 Semantic Scholar 与 arXiv API 提供的规范化元数据。
+
+默认路径只依赖当前 agent、skill 自带脚本和公共网页来源。
 
 ## 输出
 

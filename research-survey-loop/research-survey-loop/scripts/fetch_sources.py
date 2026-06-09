@@ -1,50 +1,33 @@
 #!/usr/bin/env python3
-"""Search, download, and move survey sources into a task-local directory."""
+"""Search, download, and organize survey sources into a task-local directory.
+
+This helper is intentionally standalone. It uses public HTTP APIs and local
+filesystem operations only; it does not assume other installed skills.
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import shutil
-import subprocess
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 
-SKILL_DIR = Path(__file__).resolve().parents[1]
-CODEX_HOME = Path(os.getenv("CODEX_HOME", str(Path.home() / ".codex"))).expanduser()
-SKILLS_HOME = CODEX_HOME / "skills"
-ARXIV_SCRIPT = SKILLS_HOME / "arxiv" / "arxiv_fetch.py"
-SEMANTIC_SCRIPT = SKILLS_HOME / "semantic-scholar" / "semantic_scholar_fetch.py"
-EXA_SCRIPT = SKILLS_HOME / "exa-search" / "exa_search.py"
-
-DOMAIN_GROUPS: dict[str, list[str]] = {
-    "nature-science": ["nature.com", "science.org"],
-    "cv": ["openaccess.thecvf.com", "ieeexplore.ieee.org", "springer.com"],
-    "robotics": ["science.org", "journals.sagepub.com", "roboticsconference.org", "proceedings.mlr.press"],
-}
-
-USER_AGENT = "research-survey-loop/1.0"
-
-
-def run_json_command(args: list[str]) -> Any:
-    proc = subprocess.run(
-        args,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
-    if proc.returncode != 0:
-        message = (proc.stderr or proc.stdout or "command failed").strip()
-        raise RuntimeError(message)
-    return json.loads(proc.stdout)
+_ATOM_NS = "http://www.w3.org/2005/Atom"
+_ARXIV_API_BASE = "http://export.arxiv.org/api/query"
+_USER_AGENT = "research-survey-loop/1.0"
+_MIN_PDF_BYTES = 10_240
+_NEW_STYLE_ID_RE = re.compile(r"^\d{4}\.\d{4,5}(v\d+)?$")
+_OLD_STYLE_ID_RE = re.compile(r"^[A-Za-z.-]+/\d{7}(v\d+)?$")
 
 
 def now_stamp() -> str:
@@ -90,28 +73,109 @@ def unique_destination(dest_dir: Path, filename: str) -> Path:
         counter += 1
 
 
-def normalize_arxiv_results(payload: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    rows = []
-    for item in payload:
+def http_get_json(url: str) -> Any:
+    request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+    with urllib.request.urlopen(request, timeout=30) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def http_get_bytes(url: str, timeout: int = 60) -> tuple[bytes, str, str]:
+    request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        data = response.read()
+        content_type = response.headers.get_content_type()
+        final_url = response.geturl()
+    return data, content_type, final_url
+
+
+def _normalize_arxiv_id(arxiv_id: str) -> str:
+    value = arxiv_id.strip()
+    if "/abs/" in value:
+        value = value.split("/abs/", 1)[1]
+    if value.startswith("id:"):
+        value = value[3:]
+    if "v" in value.split(".")[-1]:
+        value = value.rsplit("v", 1)[0]
+    return value
+
+
+def _looks_like_arxiv_id(value: str) -> bool:
+    value = value.strip()
+    return bool(_NEW_STYLE_ID_RE.match(value) or _OLD_STYLE_ID_RE.match(value))
+
+
+def _arxiv_api_url(query: str, max_results: int, start: int = 0) -> str:
+    query = query.strip()
+    if query.startswith("id:") or _looks_like_arxiv_id(query):
+        params = {"id_list": _normalize_arxiv_id(query)}
+    else:
+        params = {
+            "search_query": query,
+            "start": start,
+            "max_results": max_results,
+            "sortBy": "relevance",
+            "sortOrder": "descending",
+        }
+    return f"{_ARXIV_API_BASE}?{urllib.parse.urlencode(params)}"
+
+
+def search_arxiv(query: str, max_per_source: int) -> tuple[list[dict[str, Any]], list[str]]:
+    warnings: list[str] = []
+    url = _arxiv_api_url(query, max_per_source)
+    request = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            root = ET.fromstring(response.read())
+    except Exception as exc:  # noqa: BLE001
+        return [], [f"arXiv search failed: {exc}"]
+
+    rows: list[dict[str, Any]] = []
+    for entry in root.findall(f"{{{_ATOM_NS}}}entry"):
+        raw_id = entry.findtext(f"{{{_ATOM_NS}}}id", "")
+        arxiv_id = _normalize_arxiv_id(raw_id)
+        title = (entry.findtext(f"{{{_ATOM_NS}}}title", "") or "").strip().replace("\n", " ")
+        abstract = (entry.findtext(f"{{{_ATOM_NS}}}summary", "") or "").strip().replace("\n", " ")
+        published = (entry.findtext(f"{{{_ATOM_NS}}}published", "") or "")[:10]
+        authors = [
+            author.findtext(f"{{{_ATOM_NS}}}name", "")
+            for author in entry.findall(f"{{{_ATOM_NS}}}author")
+            if author.findtext(f"{{{_ATOM_NS}}}name", "")
+        ]
         rows.append(
             {
                 "priority_bucket": "arxiv",
                 "source": "arxiv",
-                "title": item.get("title"),
-                "year": (item.get("published") or "")[:4] or None,
+                "title": title,
+                "abstract": abstract,
+                "year": published[:4] or None,
                 "venue": "arXiv",
-                "authors": item.get("authors") or [],
-                "url": item.get("abs_url"),
-                "pdf_url": item.get("pdf_url"),
-                "arxiv_id": item.get("id"),
+                "authors": authors,
+                "url": f"https://arxiv.org/abs/{arxiv_id}",
+                "pdf_url": f"https://arxiv.org/pdf/{arxiv_id}.pdf",
+                "arxiv_id": arxiv_id,
                 "doi": None,
             }
         )
-    return rows
+    return rows, warnings
 
 
-def normalize_semantic_results(payload: dict[str, Any]) -> list[dict[str, Any]]:
-    rows = []
+def search_semantic(query: str, max_per_source: int) -> tuple[list[dict[str, Any]], list[str]]:
+    warnings: list[str] = []
+    params = urllib.parse.urlencode(
+        {
+            "query": query,
+            "limit": max_per_source,
+            "fields": "title,year,venue,url,authors,externalIds,openAccessPdf,citationCount,publicationVenue",
+            "fieldsOfStudy": "Computer Science,Engineering",
+        }
+    )
+    url = f"https://api.semanticscholar.org/graph/v1/paper/search?{params}"
+    try:
+        payload = http_get_json(url)
+    except Exception as exc:  # noqa: BLE001
+        return [], [f"Semantic Scholar search failed: {exc}"]
+
+    rows: list[dict[str, Any]] = []
     for item in payload.get("data", []):
         external_ids = item.get("externalIds") or {}
         open_access_pdf = item.get("openAccessPdf") or {}
@@ -132,27 +196,7 @@ def normalize_semantic_results(payload: dict[str, Any]) -> list[dict[str, Any]]:
                 "citation_count": item.get("citationCount"),
             }
         )
-    return rows
-
-
-def normalize_exa_results(group: str, payload: dict[str, Any]) -> list[dict[str, Any]]:
-    rows = []
-    for item in payload.get("data", []):
-        rows.append(
-            {
-                "priority_bucket": group,
-                "source": "exa",
-                "title": item.get("title"),
-                "year": (item.get("published_date") or "")[:4] or None,
-                "venue": None,
-                "authors": [item.get("author")] if item.get("author") else [],
-                "url": item.get("url"),
-                "pdf_url": item.get("url") if str(item.get("url", "")).lower().endswith(".pdf") else None,
-                "arxiv_id": None,
-                "doi": None,
-            }
-        )
-    return rows
+    return rows, warnings
 
 
 def dedupe_results(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -161,7 +205,7 @@ def dedupe_results(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for row in rows:
         key_candidates = [
             f"doi:{row.get('doi')}" if row.get("doi") else "",
-            f"arxiv:{row.get('arxiv_id')}" if row.get("arxiv_id") else "",
+            f"arxiv:{_normalize_arxiv_id(row.get('arxiv_id'))}" if row.get("arxiv_id") else "",
             f"url:{row.get('url')}" if row.get("url") else "",
             f"title:{normalize_title(row.get('title'))}" if row.get("title") else "",
         ]
@@ -173,114 +217,59 @@ def dedupe_results(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return kept
 
 
-def search_exa(query: str, max_per_source: int, groups: list[str]) -> tuple[list[dict[str, Any]], list[str]]:
-    warnings: list[str] = []
-    if not EXA_SCRIPT.exists():
-        warnings.append("Exa helper script not found; skipped publisher-priority search.")
-        return [], warnings
-    if not os.getenv("EXA_API_KEY", "").strip():
-        warnings.append("EXA_API_KEY not set; skipped publisher-priority Exa search.")
-        return [], warnings
-
-    results: list[dict[str, Any]] = []
-    for group in groups:
-        domains = DOMAIN_GROUPS.get(group)
-        if not domains:
-            warnings.append(f"Unknown Exa domain group '{group}'; skipped.")
-            continue
-        try:
-            payload = run_json_command(
-                [
-                    sys.executable,
-                    str(EXA_SCRIPT),
-                    "search",
-                    query,
-                    "--max",
-                    str(max_per_source),
-                    "--category",
-                    "research paper",
-                    "--content",
-                    "none",
-                    "--include-domains",
-                    ",".join(domains),
-                ]
-            )
-        except RuntimeError as exc:
-            warnings.append(f"Exa search failed for {group}: {exc}")
-            continue
-        results.extend(normalize_exa_results(group, payload))
-    return results, warnings
-
-
-def search_semantic(query: str, max_per_source: int) -> tuple[list[dict[str, Any]], list[str]]:
-    if not SEMANTIC_SCRIPT.exists():
-        return [], ["Semantic Scholar helper script not found; skipped published-venue search."]
-    try:
-        payload = run_json_command(
-            [
-                sys.executable,
-                str(SEMANTIC_SCRIPT),
-                "search",
-                query,
-                "--max",
-                str(max_per_source),
-                "--fields-of-study",
-                "Computer Science,Engineering",
-                "--publication-types",
-                "JournalArticle,Conference",
-            ]
-        )
-    except RuntimeError as exc:
-        return [], [f"Semantic Scholar search failed: {exc}"]
-    return normalize_semantic_results(payload), []
-
-
-def search_arxiv(query: str, max_per_source: int) -> tuple[list[dict[str, Any]], list[str]]:
-    if not ARXIV_SCRIPT.exists():
-        return [], ["arXiv helper script not found; skipped arXiv search."]
-    try:
-        payload = run_json_command(
-            [
-                sys.executable,
-                str(ARXIV_SCRIPT),
-                "search",
-                query,
-                "--max",
-                str(max_per_source),
-            ]
-        )
-    except RuntimeError as exc:
-        return [], [f"arXiv search failed: {exc}"]
-    return normalize_arxiv_results(payload), []
-
-
 def download_arxiv(arxiv_id: str, dest_dir: Path) -> dict[str, Any]:
-    payload = run_json_command(
-        [
-            sys.executable,
-            str(ARXIV_SCRIPT),
-            "download",
-            arxiv_id,
-            "--dir",
-            str(dest_dir),
-        ]
-    )
+    clean_id = _normalize_arxiv_id(arxiv_id)
+    safe_id = clean_id.replace("/", "_")
+    destination = dest_dir / f"{safe_id}.pdf"
+
+    if destination.exists():
+        return {
+            "action": "skipped-existing",
+            "source": "arxiv",
+            "id": clean_id,
+            "path": str(destination),
+        }
+
+    url = f"https://arxiv.org/pdf/{clean_id}.pdf"
+    for attempt in (1, 2):
+        try:
+            data, content_type, final_url = http_get_bytes(url)
+            break
+        except urllib.error.HTTPError as exc:
+            if exc.code == 429 and attempt == 1:
+                time.sleep(5)
+                continue
+            raise
+    else:
+        raise RuntimeError(f"Failed to download {url}")
+
+    if content_type != "application/pdf" and len(data) < _MIN_PDF_BYTES:
+        raise ValueError(f"Downloaded file is only {len(data)} bytes; likely not a valid PDF")
+
+    destination.write_bytes(data)
     return {
-        "action": "downloaded" if not payload.get("skipped") else "skipped-existing",
+        "action": "downloaded",
         "source": "arxiv",
-        "path": payload.get("path"),
-        "id": payload.get("id"),
+        "id": clean_id,
+        "path": str(destination),
+        "url": final_url,
     }
 
 
-def direct_download(url: str, dest_dir: Path, title: str | None = None, *, allow_html: bool = False) -> dict[str, Any]:
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=60) as response:
-        data = response.read()
-        headers = response.headers
-        content_type = headers.get_content_type()
-        final_url = response.geturl()
+def fetch_semantic_paper(semantic_id: str) -> dict[str, Any]:
+    fields = "title,url,openAccessPdf,externalIds,venue,year,authors"
+    url = f"https://api.semanticscholar.org/graph/v1/paper/{urllib.parse.quote(semantic_id)}?fields={fields}"
+    return http_get_json(url)
 
+
+def direct_download(
+    url: str,
+    dest_dir: Path,
+    title: str | None = None,
+    *,
+    allow_html: bool = False,
+) -> dict[str, Any]:
+    data, content_type, final_url = http_get_bytes(url)
     parsed = urllib.parse.urlparse(final_url)
     raw_name = Path(parsed.path).name
     suffix = Path(raw_name).suffix.lower()
@@ -313,7 +302,7 @@ def direct_download(url: str, dest_dir: Path, title: str | None = None, *, allow
 
 def import_local(paths: list[str], task_dir: Path, *, mode: str) -> list[dict[str, Any]]:
     papers_dir, _ = ensure_task_dirs(task_dir)
-    actions = []
+    actions: list[dict[str, Any]] = []
     for raw_path in paths:
         source = Path(raw_path).expanduser().resolve()
         if not source.exists():
@@ -337,7 +326,7 @@ def import_local(paths: list[str], task_dir: Path, *, mode: str) -> list[dict[st
 
 def reuse_task_paper(paths: list[str], from_task: Path, task_dir: Path) -> list[dict[str, Any]]:
     papers_dir, _ = ensure_task_dirs(task_dir)
-    actions = []
+    actions: list[dict[str, Any]] = []
     for raw_path in paths:
         source = Path(raw_path)
         source = source if source.is_absolute() else (from_task / source)
@@ -372,16 +361,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    search = subparsers.add_parser("search", help="Search web-first sources and print normalized JSON.")
+    search = subparsers.add_parser("search", help="Search public APIs and print normalized JSON.")
     search.add_argument("query")
     search.add_argument("--task-dir", required=True)
     search.add_argument("--max-per-source", type=int, default=5)
-    search.add_argument(
-        "--domain-groups",
-        default="nature-science,cv,robotics",
-        help="Comma-separated Exa domain groups. Default: nature-science,cv,robotics",
-    )
-    search.add_argument("--skip-exa", action="store_true")
     search.add_argument("--skip-semantic", action="store_true")
     search.add_argument("--skip-arxiv", action="store_true")
     search.add_argument(
@@ -420,15 +403,10 @@ def main() -> int:
     if args.command == "search":
         task_dir = Path(args.task_dir).expanduser().resolve()
         papers_dir, supplementary_dir = ensure_task_dirs(task_dir)
-        domain_groups = [item.strip() for item in args.domain_groups.split(",") if item.strip()]
 
         rows: list[dict[str, Any]] = []
         warnings: list[str] = []
 
-        if not args.skip_exa:
-            exa_rows, exa_warnings = search_exa(args.query, args.max_per_source, domain_groups)
-            rows.extend(exa_rows)
-            warnings.extend(exa_warnings)
         if not args.skip_semantic:
             semantic_rows, semantic_warnings = search_semantic(args.query, args.max_per_source)
             rows.extend(semantic_rows)
@@ -447,16 +425,10 @@ def main() -> int:
                     break
                 try:
                     if row.get("arxiv_id"):
-                        downloads.append(download_arxiv(row["arxiv_id"], papers_dir))
+                        downloads.append(download_arxiv(str(row["arxiv_id"]), papers_dir))
                         remaining -= 1
                     elif row.get("pdf_url"):
-                        downloads.append(
-                            direct_download(
-                                row["pdf_url"],
-                                papers_dir,
-                                title=row.get("title"),
-                            )
-                        )
+                        downloads.append(direct_download(str(row["pdf_url"]), papers_dir, title=row.get("title")))
                         remaining -= 1
                 except Exception as exc:  # noqa: BLE001
                     warnings.append(f"Download failed for {row.get('title')}: {exc}")
@@ -483,17 +455,10 @@ def main() -> int:
             if args.arxiv_id:
                 payload = download_arxiv(args.arxiv_id, papers_dir)
             elif args.semantic_id:
-                paper = run_json_command(
-                    [
-                        sys.executable,
-                        str(SEMANTIC_SCRIPT),
-                        "paper",
-                        args.semantic_id,
-                    ]
-                )
+                paper = fetch_semantic_paper(args.semantic_id)
                 pdf_info = paper.get("openAccessPdf") or {}
                 if pdf_info.get("url"):
-                    payload = direct_download(pdf_info["url"], papers_dir, title=paper.get("title"))
+                    payload = direct_download(str(pdf_info["url"]), papers_dir, title=paper.get("title"))
                     payload["semantic_id"] = args.semantic_id
                 else:
                     payload = {
@@ -505,12 +470,7 @@ def main() -> int:
                     }
             else:
                 destination_dir = papers_dir if str(args.url).lower().endswith(".pdf") else supplementary_dir
-                payload = direct_download(
-                    args.url,
-                    destination_dir,
-                    title=args.title,
-                    allow_html=args.allow_html,
-                )
+                payload = direct_download(str(args.url), destination_dir, title=args.title, allow_html=args.allow_html)
         except Exception as exc:  # noqa: BLE001
             print(str(exc), file=sys.stderr)
             return 1

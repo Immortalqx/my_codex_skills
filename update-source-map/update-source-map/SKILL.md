@@ -1,13 +1,13 @@
 ---
 name: update-source-map
-description: Create or update an agent-readable source map (Markdown + JSON) for any project directory. Use when Codex needs to (1) index an unfamiliar workspace before doing work in it, (2) refresh a stale source map after files are added, removed, or renamed, (3) prepare quick navigation context for a multi-turn task that touches many files, or (4) hand a downstream agent a structured inventory of the project. Auto-detects whether to create a new map or update an existing one based on the presence of `x_temp/SOURCE_MAP.md` or `SOURCE_MAP.md` at the workspace root. Outputs are human-readable Markdown for navigation and structured JSON for programmatic queries. Curated file summaries in a separate JSON file persist across regenerations.
+description: Create or update a structured source map (Markdown + JSON) for any project directory. Use when Codex needs to (1) index an unfamiliar workspace before doing work in it, (2) refresh a stale source map after files are added, removed, or renamed, (3) prepare quick navigation context for a multi-turn task that touches many files, or (4) preserve a reusable structured inventory of the project. Auto-detects whether to create a new map or update an existing one based on the presence of `x_temp/SOURCE_MAP.md` or `SOURCE_MAP.md` at the workspace root. Outputs are human-readable Markdown for navigation and structured JSON for programmatic queries. Curated file summaries in a separate JSON file persist across regenerations.
 ---
 
 # Update Source Map
 
 ## Overview
 
-Build (or refresh) a structured, agent-readable index of a project directory. The skill always produces a **Markdown** `SOURCE_MAP.md` (primary, human + agent) and a **JSON** `source_map.json` (programmatic). A hand-curated `curated_summaries.json` is preserved across regenerations so the agent's per-file knowledge compounds over time.
+Build (or refresh) a structured index of a project directory. The skill always produces a **Markdown** `SOURCE_MAP.md` (primary, human-readable) and a **JSON** `source_map.json` (programmatic). A hand-curated `curated_summaries.json` is preserved across regenerations so curated per-file knowledge compounds over time.
 
 ## When this skill runs
 
@@ -34,7 +34,7 @@ The detection JSON has fields: `mode`, `md_path`, `json_path`, `found_at`. Pass 
 
 If detection returns `partial: true` (only one of the two files exists), warn the user before proceeding.
 
-### Step 2 — Plan with user (always)
+### Step 2 — Confirm the Run Plan
 
 Before any execution, report the plan:
 
@@ -44,7 +44,7 @@ Before any execution, report the plan:
 - Any custom exclusions or extensions
 - Estimated file count from a quick `find` (to set expectations)
 
-Get explicit approval before running scripts. Do not silently start.
+If the user explicitly asked you to build or update the source map, proceed after stating the plan. If the user only asked what would happen, stop after the plan.
 
 ### Step 3 — Setup
 
@@ -72,7 +72,7 @@ python3 scripts/regenerate.py <workspace_root> \
     [--keep-prev-inventory]
 ```
 
-**Option B — modular** (use when the agent needs to inspect intermediate results):
+**Option B — modular** (use when intermediate inspection is useful):
 ```bash
 # 1. Scan
 python3 scripts/scan_workspace.py <workspace_root> \
@@ -137,7 +137,7 @@ Append the standard completion audit block (see "Completion audit" below).
 - ❌ Never read PDF contents — metadata only
 - ❌ Never index image assets (`*.assets/`, `*.images/`, etc.)
 - ❌ Never touch files with names containing `no modify`, `no-edit`, `readonly`, `do not touch`
-- ❌ Never overwrite `curated_summaries.json` entries that the user / agent curated by hand
+- ❌ Never overwrite `curated_summaries.json` entries that were curated by hand
 - ❌ Never reformat a regeneration silently — if file count changes, surface the diff to the user
 
 ## Completion audit
@@ -163,6 +163,6 @@ The skill encodes mistakes from a prior real-world run on a 43-file / 66MB perso
 2. **Root-file-as-folder bug**: top-level rollup loop treated root-level files as if they were subdirectories — fixed by skipping `len(parts) == 1` in `compute_top_rollups`
 3. **Double-slash in tree root**: render_tree passed both name and a trailing slash — fixed by single source of truth in `tree_root`
 4. **Lost curated knowledge**: if curated summaries were stored in the build script, they were lost on every regeneration — fixed by extracting to `curated_summaries.json`
-5. **PDF binary read attempts**: the agent sometimes tries to `read_text()` on PDFs — fixed by never opening PDFs for content, only metadata
+5. **PDF binary read attempts**: avoid `read_text()` on PDFs; only inspect metadata
 
 When you add new scripts, check the verify checklist in Step 5 for additional bugs to add.

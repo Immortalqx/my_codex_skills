@@ -182,13 +182,6 @@ Summarize what was done:
 - `Downloaded: papers/2301.07041.pdf (842 KB)` for each download.
 - Any warnings, including rate limits, API errors, tiny files, or already-existing PDFs.
 
-Suggest follow-up skills only when relevant:
-
-```text
-/research-lit "topic"     - multi-source review: Zotero + Obsidian + local PDFs + web
-/novelty-check "idea"     - verify an idea against these papers
-```
-
 ## Key Rules
 
 - Always show the arXiv ID prominently for citations and reproducibility.
@@ -197,4 +190,4 @@ Suggest follow-up skills only when relevant:
 - Handle both new (`2301.07041`) and old (`cs/0601001`) arXiv ID formats.
 - Create `PAPER_DIR` automatically when downloading.
 - Keep all task output in stdout and user-requested PDF files only. Do not create logs, caches, or debug JSON as skill results.
-- If the arXiv API is unreachable, report the error clearly and suggest `/research-lit "topic" - sources: web` as a fallback.
+- If the arXiv API is unreachable, report the error clearly and fall back to direct web results when possible.

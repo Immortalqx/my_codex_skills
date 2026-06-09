@@ -34,17 +34,17 @@ Use $help-me-read on this PDF: lecture7.pdf
 Use Chinese for the note.
 ```
 
-如果用户已经装了 web search / image understanding 类型的 skill，本 skill 会**优先调用**；如果没有，会回退到直接 HTTP 和 OCR，并在笔记里如实记录。
+如果当前环境里有可用的 web search / image understanding 工具，本 skill 会优先使用；如果没有，会回退到直接 HTTP 和 OCR，并在笔记里如实记录。
 
 ## 工作流程
 
-1. 确认输入 PDF、写作语言、目标输出路径
-2. 抽文本 + 抽整页 PNG（200+ DPI）。论文还要按需裁剪要插入的图
-经典讲解（由 Codex 在写笔记时挑最相关的那一份，比如某个知名博客系列、公开课或教材章节）
-4. 对**密集图**（架构图、plot family）调用 image understanding，解释存到 `notes/`
-5. 设计**一个贯穿故事**，能一对一映射到文档每个主概念
-6. 写精读笔记：每个 topic 一个 block，结尾有 Q&A
-7. 验证：图片文件夹独立、每张图都能找到、每个链接可达、没覆盖任何旧笔记
+1. 确认输入 PDF、写作语言、目标输出路径。
+2. 抽文本和整页 PNG（200+ DPI）；论文还要按需裁剪要插入的图。
+3. 做发散式网页检索，补足 PDF 里没有讲清楚的背景、前身方法、后继方法和经典讲解材料。
+4. 对密集图（架构图、plot family）做 image understanding，解释存到 `notes/`。
+5. 设计一个贯穿故事，能一对一映射到文档每个主概念。
+6. 写精读笔记：每个 topic 一个 block，结尾有 Q&A。
+7. 验证：图片文件夹独立、每张图都能找到、每个链接可达、没覆盖任何旧笔记。
 
 ## 输出布局
 

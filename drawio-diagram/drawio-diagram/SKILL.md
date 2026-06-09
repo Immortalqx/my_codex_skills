@@ -69,7 +69,7 @@ For research tasks, first build content from source materials:
 - Insert useful assets into draw.io when they improve fidelity. Do not replace real paper figures with weak hand-drawn substitutes.
 - For a paper poster, at least one relevant method/result/setup/qualitative asset should be inserted when such assets exist. If none are inserted, justify this explicitly in `qa_notes.md`.
 - If the source paper includes figures that communicate the method, robot/camera setup, dataset, results, ablations, or qualitative examples, those figures have priority over newly invented icons or generic boxes.
-- Keep figure assets as movable draw.io image objects where possible. If programmatic insertion is unreliable, use the `auto_drawio` browser editor or draw.io desktop to insert the images, then re-export and inspect.
+- Keep figure assets as movable draw.io image objects where possible. If programmatic insertion is unreliable, use draw.io desktop or the draw.io browser editor to insert the images, then re-export and inspect.
 - Use `scripts/render_pdf_pages.py` when possible.
 
 ## Draw.io Draft Requirements
@@ -123,12 +123,6 @@ QA checklist:
 
 Only after every item passes may the figure be declared ready.
 
-## auto_drawio Bridge
-
-If `auto_presentation/auto_drawio` is available, connect the draft so the user can watch and edit live. See `references/auto_drawio.md`.
-
-Use the bridge for interactive review whenever possible. If no bridge is available, still create the `.drawio` and inspect exported PNG as part of the visual QA loop.
-
 ## Export
 
 Use `scripts/export_drawio.ps1` when possible:
@@ -145,7 +139,6 @@ The exported PNG is the visual QA preview. Embedded draw.io metadata can create 
 
 Report:
 
-- Bridge URL if running.
 - `.drawio`, `.svg`, `.pdf`, `.png`, and `qa_notes.md` paths.
 - Whether source figures/images were reused.
 - Whether visual QA passed.

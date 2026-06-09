@@ -1,6 +1,6 @@
 ---
 name: help-me-read
-description: Deep-read a single user-provided PDF (lecture slides or academic paper) and produce a story-driven close-read note in the user`s working language. Use when the user asks Codex to "close-read", "detailed study notes", "tutor-style breakdown", "deep study notes", "open-book review", or hands over a PDF plus a target output path. The skill reads every page, captures full-page screenshots of slides and region screenshots of paper figures, runs divergent web searches to fill in background that is not in the PDF, calls image-understanding tools for non-OCR figure analysis, and writes a new note file with a single unified narrative metaphor, motivation-problem-solution-why sections per topic, key term glosses, and source links. The skill never overwrites an existing note, writes per-note assets in a sibling folder, and works without assuming which external skills the user has installed.
+description: Deep-read a single user-provided PDF (lecture slides or academic paper) and produce a story-driven close-read note in the user`s working language. Use when the user asks Codex to "close-read", "detailed study notes", "tutor-style breakdown", "deep study notes", "open-book review", or hands over a PDF plus a target output path. The skill reads every page, captures full-page screenshots of slides and region screenshots of paper figures, runs divergent web searches to fill in background that is not in the PDF, uses available image-understanding tools for non-OCR figure analysis, and writes a new note file with a single unified narrative metaphor, motivation-problem-solution-why sections per topic, key term glosses, and source links. The skill never overwrites an existing note and writes per-note assets in a sibling folder.
 ---
 
 # Help Me Read
@@ -121,7 +121,7 @@ Strong search categories:
 
 Save to `search/queries/` one short text file per search with the exact query and date, and to `search/results/` a short markdown note per result with the original URL and a 1-3 sentence summary.
 
-When the user has an installed web search skill, call it. The skill description says "encouraged" not "required": prefer a real web search tool over manual `curl` or `wget`, but if none is available, fall back to direct HTTP and record the source.
+Use the best web-search capability available to the current agent. Prefer a real web-search tool over manual `curl` or `wget`, but if none is available, fall back to direct HTTP and record the source.
 
 ### 4. Image Understanding for Non-OCR Figures
 
@@ -131,7 +131,7 @@ For figures that are dense diagrams, plot families, or architecture overviews:
 - write the explanation into `notes/figure_<n>_explanation.md`
 - prefer the image-understanding tool over manual OCR; OCR is a fallback for text inside an image, not for understanding a figure
 
-When the user has an installed image-understanding skill, call it. The skill description says "encouraged" not "required": prefer a real image-understanding tool over guessing, but if none is available, say so in the note and fall back to the closest OCR you can manage.
+Use the best image-understanding capability available to the current agent. Prefer a real image-understanding tool over guessing, but if none is available, say so in the note and fall back to the closest OCR you can manage.
 
 ### 5. Design the Running Story
 

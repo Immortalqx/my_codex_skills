@@ -1,0 +1,4 @@
+interface:
+  display_name: "AlphaXiv Paper Lookup"
+  short_description: "Quick AlphaXiv paper summaries"
+  default_prompt: "Use $alphaxiv to quickly explain this arXiv paper and fall back to source only if needed."

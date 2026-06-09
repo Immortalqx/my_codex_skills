@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Wiki"
+  short_description: "Maintain a persistent research knowledge base"
+  default_prompt: "Use $research-wiki to initialize, query, or update the persistent research knowledge base for this project."

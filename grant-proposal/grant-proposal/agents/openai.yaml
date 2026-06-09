@@ -1,0 +1,4 @@
+interface:
+  display_name: "Grant Proposal"
+  short_description: "Draft structured grant proposals"
+  default_prompt: "Use $grant-proposal to turn this research idea into a structured grant proposal."

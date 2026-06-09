@@ -15,7 +15,7 @@ The skill **skips** the following by default. Pass `--exclude "a,b,c"` to add mo
 - `.git` — Git internals
 - `.venv` / `venv` — Python virtual envs
 - `dist` / `build` — build outputs
-- `notes.assets` — Typora/Obsidian-style embedded images
+- `notes.assets` — note-editor-style embedded images
 - `x_temp` — Codex-style temp/task workspace
 - `x_temp_*` — any `x_temp_<date>` task subfolder
 
