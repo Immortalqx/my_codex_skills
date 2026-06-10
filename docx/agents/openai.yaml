@@ -1,0 +1,4 @@
+interface:
+  display_name: "DOCX Editor"
+  short_description: "Create, edit, and inspect Word files"
+  default_prompt: "Use $docx to create or edit this Word document while preserving structure, formatting, and tracked changes when needed."

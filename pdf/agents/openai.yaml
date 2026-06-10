@@ -1,0 +1,4 @@
+interface:
+  display_name: "PDF Processing"
+  short_description: "Read, fill, edit, and generate PDFs"
+  default_prompt: "Use $pdf to inspect this PDF, extract what matters, and choose the right workflow for editing, forms, or generation."

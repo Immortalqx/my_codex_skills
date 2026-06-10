@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spreadsheet Files"
+  short_description: "Create, fix, and analyze spreadsheets"
+  default_prompt: "Use $xlsx to build or repair this spreadsheet with real formulas, formatting, and recalculation checks."

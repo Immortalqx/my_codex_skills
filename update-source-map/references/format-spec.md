@@ -16,13 +16,7 @@ A human + agent readable index. Sections in fixed order:
 8. **Conventions** — fixed rules the agent must obey
 9. **Meta** — generation timestamp, totals
 
-Format conventions:
-- All file paths wrapped in backticks: `` `path/to/file.md` ``
-- Sizes in human format: `B`, `KB`, `MB`
-- Word counts comma-separated: `1,234`
-- Date format: `YYYY-MM-DD`
-- All tables are GitHub-flavored Markdown
-- UTF-8, no BOM
+Format conventions: - All file paths wrapped in backticks: `` `path/to/file.md` `` - Sizes in human format: `B`, `KB`, `MB` - Word counts comma-separated: `1,234` - Date format: `YYYY-MM-DD` - All tables are GitHub-flavored Markdown - UTF-8, no BOM
 
 ## 2. `source_map.json` — Structured Companion (JSON)
 
@@ -74,11 +68,7 @@ Top-level keys:
 }
 ```
 
-This is the only file the user/agent is expected to edit over time. The skill:
-- Loads existing entries in update mode
-- Preserves them across regenerations
-- Drops entries for files that no longer exist
-- New files start with no entry (the H2 skeleton in the markdown gives the auto-summary)
+This is the only file the user/agent is expected to edit over time. The skill: - Loads existing entries in update mode - Preserves them across regenerations - Drops entries for files that no longer exist - New files start with no entry (the H2 skeleton in the markdown gives the auto-summary)
 
 ## What is NOT included
 

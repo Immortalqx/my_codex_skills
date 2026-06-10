@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhD Intro Drafter"
+  short_description: "Outline technical-paper introductions"
+  default_prompt: "Use $phd-intro-drafter to turn this paper concept into a six-paragraph Introduction outline with aligned contributions."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhD Pre-Submission Reviewer"
+  short_description: "Audit papers before submission"
+  default_prompt: "Use $phd-pre-submission-reviewer to review this draft and surface submission-blocking issues first."

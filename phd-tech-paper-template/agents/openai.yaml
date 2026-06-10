@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhD Tech Paper Template"
+  short_description: "Build technical paper skeletons"
+  default_prompt: "Use $phd-tech-paper-template to build the paper logic chain, methodology skeleton, and consistency checks before drafting."

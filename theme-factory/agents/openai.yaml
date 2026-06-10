@@ -1,0 +1,4 @@
+interface:
+  display_name: "Theme Factory"
+  short_description: "Apply curated themes to artifacts"
+  default_prompt: "Use $theme-factory to choose or derive a theme and apply it consistently across this artifact."

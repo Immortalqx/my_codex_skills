@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhD Figure Designer"
+  short_description: "Design paper figures and audits"
+  default_prompt: "Use $phd-figure-designer to choose the right figure paradigm, sketch the layout, and audit the result."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhD Benchmark Paper Template"
+  short_description: "Structure benchmark paper logic"
+  default_prompt: "Use $phd-benchmark-paper-template to audit this benchmark paper idea and produce the core logic chain and section skeleton."

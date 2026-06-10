@@ -9,13 +9,9 @@ Draft a grant proposal based on: **$ARGUMENTS**
 
 ## Standalone Scope
 
-This skill works from the user's request, local project files, and any publicly
-accessible literature or funder pages that can be reached in the current
-environment.
+This skill works from the user's request, local project files, and any publicly accessible literature or funder pages that can be reached in the current environment.
 
-No local API key is required by this skill. If network access is unavailable,
-continue from user-provided materials and clearly mark literature or funded-project
-coverage gaps.
+No local API key is required by this skill. If network access is unavailable, continue from user-provided materials and clearly mark literature or funded-project coverage gaps.
 
 ## Defaults
 
@@ -28,8 +24,7 @@ coverage gaps.
   - NSFC -> Chinese
   - NSF/ERC/DFG/SNSF/ARC/NWO -> English unless requested otherwise
   - GENERIC -> match the user's language
-- **AUTO_PROCEED = false**. Stop at major planning checkpoints unless the user
-  explicitly asks for a complete one-shot draft.
+- **AUTO_PROCEED = false**. Stop at major planning checkpoints unless the user explicitly asks for a complete one-shot draft.
 
 Supported grant types:
 
@@ -62,8 +57,7 @@ Read only what is useful for the requested proposal:
    - recent papers and surveys in the area
    - funded-project databases for related awards
 
-If critical PI-specific or budget information is missing, use explicit placeholders
-such as `[TODO: add PI publications]` and `[AMOUNT]`. Never invent these details.
+If critical PI-specific or budget information is missing, use explicit placeholders such as `[TODO: add PI publications]` and `[AMOUNT]`. Never invent these details.
 
 ## Workflow
 
@@ -77,8 +71,7 @@ Extract:
 - topic, method, application area, and expected contribution
 - any hard requirements such as page limits or mandatory sections
 
-If the request is too vague to draft responsibly, ask concise questions for the
-missing grant type, project duration, PI background, or target language.
+If the request is too vague to draft responsibly, ask concise questions for the missing grant type, project duration, PI background, or target language.
 
 ### Phase 2: Landscape and Gap
 
@@ -155,8 +148,7 @@ Proceed to full drafting, or revise the aims first?
 
 ### Phase 4: Draft the Proposal
 
-Write complete prose in the agency-specific style. Do not leave outline-only
-sections unless the user explicitly requested an outline.
+Write complete prose in the agency-specific style. Do not leave outline-only sections unless the user explicitly requested an outline.
 
 Recommended drafting order:
 
@@ -177,8 +169,7 @@ For figures, create text placeholders unless the user asks you to generate them:
 [Figure 2: Timeline and milestones.]
 ```
 
-If the user asks for figures, generate simple local SVG, Mermaid, draw.io, or
-matplotlib figures directly in the project. Do not call another skill.
+If the user asks for figures, generate simple local SVG, Mermaid, draw.io, or matplotlib figures directly in the project. Do not call another skill.
 
 ### Phase 5: Self-Check and Revise
 
@@ -194,8 +185,7 @@ Review the draft directly against the grant type's criteria:
 - Are all citations real or marked `[VERIFY]`?
 - Are page-limit or required-section constraints respected?
 
-Apply obvious fixes before presenting the final output. If a weakness cannot be
-fixed without user information, mark it as a clear TODO.
+Apply obvious fixes before presenting the final output. If a weakness cannot be fixed without user information, mark it as a clear TODO.
 
 ## Output Files
 
@@ -226,8 +216,7 @@ grant-proposal/
 └── figures/
 ```
 
-If overwriting an existing final file, preserve the previous version by writing a
-timestamped copy first, for example `GRANT_PROPOSAL_YYYYMMDD_HHmmss.md`.
+If overwriting an existing final file, preserve the previous version by writing a timestamped copy first, for example `GRANT_PROPOSAL_YYYYMMDD_HHmmss.md`.
 
 `GRANT_NOTES.md` should contain:
 

@@ -4,8 +4,7 @@ Use this file when the task depends on `mmx search query`.
 
 ## Core Rule
 
-Default to mixed Chinese + English and multiple search passes. One query is not
-enough for a non-trivial search task.
+Default to mixed Chinese + English and multiple search passes. One query is not enough for a non-trivial search task.
 
 Minimum query set:
 
@@ -95,8 +94,6 @@ Example:
 ## Result Handling
 
 - Compare titles and URLs across the whole query set before answering.
-- Prefer primary sources, official pages, arXiv, OpenReview, or author pages
-  when they exist.
+- Prefer primary sources, official pages, arXiv, OpenReview, or author pages when they exist.
 - Do not trust a single search result when names are ambiguous.
-- When the user asks for the latest or most recent status, mention concrete
-  dates from the results you rely on.
+- When the user asks for the latest or most recent status, mention concrete dates from the results you rely on.

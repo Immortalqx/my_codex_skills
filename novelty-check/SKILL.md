@@ -38,8 +38,7 @@ For EACH core claim, search using ALL available sources:
 
 ### Phase C: Evidence Synthesis
 
-Compare the proposed idea against the strongest overlapping work found in
-Phase B. Base the comparison directly on the collected evidence.
+Compare the proposed idea against the strongest overlapping work found in Phase B. Base the comparison directly on the collected evidence.
 
 For each close paper, identify:
 

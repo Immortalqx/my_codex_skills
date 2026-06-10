@@ -19,17 +19,13 @@ This skill is intentionally standalone. Its default path uses only local PDFs, p
 
 ## Runtime Knobs
 
-- **PAPER_LIBRARY**
-  Search these locations in order:
+- **PAPER_LIBRARY** Search these locations in order:
   1. a path explicitly provided by the user, e.g. `paper library: ~/my_papers/`
   2. `papers/` in the current project
   3. `literature/` in the current project
-- **MAX_LOCAL_PAPERS = 20**
-  Maximum number of local PDFs to read at the title / abstract / intro level.
-- **ARXIV_DOWNLOAD = false**
-  When `true`, download the top relevant arXiv PDFs after ranking.
-- **ARXIV_MAX_DOWNLOAD = 5**
-  Maximum number of arXiv PDFs to download.
+- **MAX_LOCAL_PAPERS = 20** Maximum number of local PDFs to read at the title / abstract / intro level.
+- **ARXIV_DOWNLOAD = false** When `true`, download the top relevant arXiv PDFs after ranking.
+- **ARXIV_MAX_DOWNLOAD = 5** Maximum number of arXiv PDFs to download.
 
 ## Argument Directives
 

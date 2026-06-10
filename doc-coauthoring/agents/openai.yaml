@@ -1,0 +1,4 @@
+interface:
+  display_name: "Doc Co-Authoring"
+  short_description: "Co-author structured documents"
+  default_prompt: "Use $doc-coauthoring to gather context, scaffold the doc, draft section by section, and run a reader-test pass."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhD Idea Evaluator"
+  short_description: "Evaluate research ideas rigorously"
+  default_prompt: "Use $phd-idea-evaluator to score this research idea, check feasibility, and decide whether to pursue it."

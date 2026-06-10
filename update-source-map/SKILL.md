@@ -11,11 +11,7 @@ Build (or refresh) a structured index of a project directory. The skill always p
 
 ## When this skill runs
 
-Trigger on requests like:
-- "build a source map for this project"
-- "update the source map"
-- "create a project index"
-- any task where Codex is about to do work in a workspace it doesn't already know well
+Trigger on requests like: - "build a source map for this project" - "update the source map" - "create a project index" - any task where Codex is about to do work in a workspace it doesn't already know well
 
 Do **not** trigger for: code refactoring, single-file edits, paper reading, or tasks unrelated to project navigation.
 
@@ -106,12 +102,7 @@ If any check fails, fix the source (`build_source_map.py`) and re-run. Do not pa
 
 ### Step 6 — Hand off
 
-Tell the user:
-- Mode used (create / update)
-- Number of files indexed
-- Where the artifacts live
-- Any diff highlights (in update mode)
-- Whether the curated_summaries.json was preserved / extended
+Tell the user: - Mode used (create / update) - Number of files indexed - Where the artifacts live - Any diff highlights (in update mode) - Whether the curated_summaries.json was preserved / extended
 
 Append the standard completion audit block (see "Completion audit" below).
 

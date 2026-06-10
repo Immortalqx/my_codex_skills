@@ -1,8 +1,6 @@
 # MiniMax CLI Setup Notes
 
-Read this file only when the user explicitly asks about setup, installation,
-auth, config, or schema export. It is not part of the default task flow for the
-`mmx-cli` skill.
+Read this file only when the user explicitly asks about setup, installation, auth, config, or schema export. It is not part of the default task flow for the `mmx-cli` skill.
 
 ## Install
 
@@ -30,8 +28,7 @@ Per-call auth override:
 mmx text chat --api-key sk-xxxxx --message "Hello"
 ```
 
-Region can be left to auto-detect or overridden with `--region global` or
-`--region cn`.
+Region can be left to auto-detect or overridden with `--region global` or `--region cn`.
 
 ## Config
 
@@ -59,8 +56,7 @@ MINIMAX_REGION=cn
 
 ## Schema Export
 
-Export JSON tool schemas when integrating `mmx` commands into another agent
-framework:
+Export JSON tool schemas when integrating `mmx` commands into another agent framework:
 
 ```bash
 mmx config export-schema

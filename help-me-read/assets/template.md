@@ -1,11 +1,6 @@
 # <Doc Title> Close-Read Note
 
-> **Source PDF**: <relative or absolute path to the source PDF>
-> **Note type**: Close-read (tutor-style), not a reference manual
-> **Working language**: <the user`s working language for this note, e.g. "Chinese" or "English">
-> **Running story**: <one sentence naming the metaphor>
->
-> If a prior note for the same PDF already exists in this folder, **do not overwrite it**. Bump the version suffix on this file.
+> **Source PDF**: <relative or absolute path to the source PDF> > **Note type**: Close-read (tutor-style), not a reference manual > **Working language**: <the user`s working language for this note, e.g. "Chinese" or "English"> > **Running story**: <one sentence naming the metaphor> > > If a prior note for the same PDF already exists in this folder, **do not overwrite it**. Bump the version suffix on this file.
 
 ---
 

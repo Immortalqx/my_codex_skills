@@ -26,12 +26,7 @@ The skill **skips** the following by default. Pass `--exclude "a,b,c"` to add mo
 
 ## Files with "Do Not Modify" Names
 
-The skill must NEVER write to files whose name contains:
-- `no modify`
-- `no-edit`
-- `no_edit`
-- `readonly`
-- `do not touch`
+The skill must NEVER write to files whose name contains: - `no modify` - `no-edit` - `no_edit` - `readonly` - `do not touch`
 
 These are typically protected master files (e.g. `README - No Modify.md`). The skill detects them in the file inventory and the agent must respect the boundary.
 
@@ -50,10 +45,6 @@ python3 regenerate.py <workspace> --ext "md,pdf,tex"
 
 ## Image / Asset Directories
 
-Embedded images in markdown notes are typically in folders named:
-- `*.assets/`
-- `*.images/`
-- `attachments/`
-- `media/`
+Embedded images in markdown notes are typically in folders named: - `*.assets/` - `*.images/` - `attachments/` - `media/`
 
 These are excluded by default. If the project has an unusual convention (e.g. `figures/`), add it to `--exclude`.

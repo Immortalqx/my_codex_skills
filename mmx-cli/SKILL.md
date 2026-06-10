@@ -9,21 +9,14 @@ Target request: `$ARGUMENTS`
 
 ## Overview
 
-Operate the already-installed local `mmx` command as the execution surface for
-MiniMax tasks. Keep the main flow focused on doing the user`s task, not on
-teaching the CLI.
+Operate the already-installed local `mmx` command as the execution surface for MiniMax tasks. Keep the main flow focused on doing the user`s task, not on teaching the CLI.
 
-Load `references/setup-notes.md` only when the user explicitly asks about
-installation, authentication, configuration, or schema export.
+Load `references/setup-notes.md` only when the user explicitly asks about installation, authentication, configuration, or schema export.
 
 ## Execution Workflow
 
-1. Determine the narrowest `mmx` command that fits the task:
-   `text chat`, `search query`, `vision describe`, `image generate`,
-   `video generate`, `speech synthesize`, `music generate`, `music cover`,
-   `quota show`, or `file` operations.
-2. Verify runtime readiness with `mmx --version` or
-   `mmx auth status --output json --quiet --non-interactive`.
+1. Determine the narrowest `mmx` command that fits the task: `text chat`, `search query`, `vision describe`, `image generate`, `video generate`, `speech synthesize`, `music generate`, `music cover`, `quota show`, or `file` operations.
+2. Verify runtime readiness with `mmx --version` or `mmx auth status --output json --quiet --non-interactive`.
 3. Run the command with agent-safe defaults first.
 4. Save generated artifacts with explicit workspace-local output paths.
 5. Verify the returned JSON, task IDs, URLs, or files before reporting success.
@@ -40,26 +33,20 @@ Add these selectively:
 
 - `--dry-run` before an expensive or ambiguous request
 - `--async` for long-running video generation
-- explicit output path flags such as `--out`, `--out-dir`, or `--download`
-  for binary artifacts
+- explicit output path flags such as `--out`, `--out-dir`, or `--download` for binary artifacts
 
 ## Search Policy
 
-When using `mmx search query`, default to mixed Chinese + English and multiple
-search passes. Do not answer from a single query unless the task is trivial.
+When using `mmx search query`, default to mixed Chinese + English and multiple search passes. Do not answer from a single query unless the task is trivial.
 
 For any non-trivial search:
 
 1. Run at least one English technical query.
 2. Run at least one Chinese query for the same concept.
-3. Run at least one mixed-language query that combines Chinese topic words with
-   canonical English names, abbreviations, model names, venue names, or product
-   terms.
-4. If the topic is recent, ambiguous, or sparse, add more passes with synonyms,
-   recency words, or source-specific filters in the query string.
+3. Run at least one mixed-language query that combines Chinese topic words with canonical English names, abbreviations, model names, venue names, or product terms.
+4. If the topic is recent, ambiguous, or sparse, add more passes with synonyms, recency words, or source-specific filters in the query string.
 5. Compare results across the query set before answering.
-6. Prefer citing URLs and titles from JSON output instead of paraphrasing from
-   memory.
+6. Prefer citing URLs and titles from JSON output instead of paraphrasing from memory.
 
 Read `references/search-playbook.md` when query design matters.
 
@@ -88,16 +75,14 @@ Preview expensive or ambiguous generation first:
 mmx image generate --prompt "..." --dry-run --output json --quiet --non-interactive
 ```
 
-Track async video tasks through `video task get` and `video download` before
-treating the job as complete.
+Track async video tasks through `video task get` and `video download` before treating the job as complete.
 
 ## Failure Handling
 
 - Report missing `mmx`, failed auth, or quota blockers directly.
 - Broaden weak search runs with bilingual synonyms and additional passes.
 - Prefer `--dry-run` or `--async` before committing to expensive generation.
-- Perform the required follow-up step when a command returns only task IDs,
-  file IDs, or URLs instead of a finished local artifact.
+- Perform the required follow-up step when a command returns only task IDs, file IDs, or URLs instead of a finished local artifact.
 
 ## References
 

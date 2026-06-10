@@ -1,0 +1,4 @@
+interface:
+  display_name: "PhD Vibe Research Workflow"
+  short_description: "Plan AI-assisted research sessions"
+  default_prompt: "Use $phd-vibe-research-workflow to plan this AI-assisted research session and keep the integrity guardrails explicit."

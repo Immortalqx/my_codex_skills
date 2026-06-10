@@ -155,20 +155,15 @@ Especially guard against:
 
 When the user is unsure how to start, try one of these common patterns:
 
-1. **Definition -> substitution -> simplification**
-   Use when the target formula is mostly algebraic.
+1. **Definition -> substitution -> simplification** Use when the target formula is mostly algebraic.
 
-2. **Global quantity -> perturbation -> decomposition**
-   Use when the target needs direct / indirect, private / external, or local / global splitting.
+2. **Global quantity -> perturbation -> decomposition** Use when the target needs direct / indirect, private / external, or local / global splitting.
 
-3. **Primitive law -> intermediate variable -> target expression**
-   Use when deriving from a physical principle, conservation law, or probabilistic identity.
+3. **Primitive law -> intermediate variable -> target expression** Use when deriving from a physical principle, conservation law, or probabilistic identity.
 
-4. **Exact model -> approximation -> interpretable closed form**
-   Use when the exact formula is too heavy and a paper needs a usable surrogate.
+4. **Exact model -> approximation -> interpretable closed form** Use when the exact formula is too heavy and a paper needs a usable surrogate.
 
-5. **General dynamic object -> frozen slice -> theorem -> return to general case**
-   Use when the real system is adaptive or state dependent, but the proof needs a simpler slice.
+5. **General dynamic object -> frozen slice -> theorem -> return to general case** Use when the real system is adaptive or state dependent, but the proof needs a simpler slice.
 
 ## Recommended Output Structure
 

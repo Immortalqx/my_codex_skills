@@ -2,36 +2,44 @@
 
 [English](./README.md) | 中文
 
-这是我个人维护的 Codex skills 集合，用于沉淀可复用的科研、写作和项目理解工作流。
+这是我维护的一组 Codex skills，主要覆盖科研、写作、文档生产、项目导航等可复用工作流。
 
-每个 skill 都是一个顶层目录。合法的 skill 目录会在根部包含 `SKILL.md`，并且可以按需包含
-`agents/`、`scripts/`、`references/` 或 `assets/`。本仓库不再使用嵌套的可安装目录，也不再保留每个 skill 自己的 README。
+本仓库的每个顶层目录都是一个可安装的 skill。一个合法的 skill 目录会在根部包含 `SKILL.md`，并可按需包含 `agents/`、`scripts/`、`references/`、`assets/` 等目录。
 
-除非某个 skill 明确说明，否则这些 skills 默认面向独立、单 agent 使用：可以使用 skill 自带脚本、本地文件和公共网页来源；通知钩子、reviewer agent 链路或隐藏的跨 skill 钩子都不是默认路径。
+## Skill 列表
 
-## Skills
-
-| Skill | 简介 | 典型用途 |
-| --- | --- | --- |
-| [`alphaxiv`](./alphaxiv/) | 使用公开 AlphaXiv Markdown 快速查询单篇 arXiv 论文，必要时降级读取完整 AlphaXiv Markdown 或 arXiv LaTeX 源码。 | 根据 arXiv ID 或 URL 快速解释单篇论文，而不是做大范围文献综述。 |
-| [`arxiv`](./arxiv/) | 搜索 arXiv、按 arXiv ID 获取论文元数据，并通过内置 arXiv Atom API 辅助脚本把 PDF 下载到本地论文库。 | 查找预印本、按查询词或 arXiv ID 下载 PDF，以及维护本地 `papers/` 或 `literature/` 论文集合。 |
-| [`drawio-diagram`](./drawio-diagram/) | 面向科研图示的 draw.io 工作流：生成可编辑 `.drawio` 草稿，导出 PNG/SVG/PDF，并在 PNG 上执行视觉 QA。 | 论文配图、海报、演示文稿视觉稿、概念图，尤其适合需要保留可编辑 draw.io 文件的场景。 |
-| [`figure-description`](./figure-description/) | 专利附图处理工作流：识别图中部件、分配附图标记，并生成正式附图说明。 | 根据本地技术图准备 CN/US/EP 专利附图说明和附图标记索引。 |
-| [`formula-derivation`](./formula-derivation/) | 研究公式推导工作流：澄清假设，并区分恒等式、命题、近似和解释。 | 把杂乱理论笔记整理成内部推导笔记、论文风格理论草稿或 blocker report。 |
-| [`grant-proposal`](./grant-proposal/) | 从研究 idea 和文献材料撰写结构化基金申请书，支持机构特定格式和通用格式。 | 把研究方向转成包含研究目标、里程碑、可行性和预期成果的 funding application。 |
-| [`help-me-read`](./help-me-read/) | 深读用户提供的 PDF，生成带页面截图、图表解释和背景补充的故事化精读笔记。 | 生成 lecture slides 或论文的精读笔记、深入解析和 tutor-style breakdown。 |
-| [`mmx-cli`](./mmx-cli/) | MiniMax CLI skill，用本地 `mmx` 命令执行文本、搜索、视觉、额度、文件和多媒体任务。 | 当 Codex 需要直接调用已配置好的本地 MiniMax CLI 时使用，尤其适合中英文混合多次搜索，以及 `--quiet`、`--output json`、`--non-interactive` 的非交互式工作流。 |
-| [`mock-review`](./mock-review/) | 给论文作者使用的模拟审稿工作流：调研 venue 要求、检查稿件 PDF、研究相关工作并生成模拟审稿意见。 | 投稿前风险排查、rebuttal 准备、论文修改前的 reviewer-style critique。 |
-| [`novelty-check`](./novelty-check/) | 研究 idea 查新工具：抽取核心 claim，检索文献，对比 closest prior work，并报告 novelty 风险。 | 在投入实现时间前检查一个方法是否看起来已经被做过。 |
-| [`proof-writer`](./proof-writer/) | 面向 theorem、lemma、proposition、corollary 等命题的严谨证明写作工作流。 | 把粗糙命题或证明草稿整理成可辩护的证明包。 |
-| [`research-lit`](./research-lit/) | 独立文献调研工作流：结合本地 PDF、公共网页检索和结构化 arXiv 元数据进行相关工作检索、比较和综合。 | 围绕某个研究主题查找相关工作、梳理论文版图并比较不同方法簇。 |
-| [`research-survey-loop`](./research-survey-loop/) | 长周期文献综述工作流：维护稳定任务文档、按来源优先级搜索论文、分块阅读论文，并逐轮扩展中文综述。 | 机器人、具身智能、计算机视觉、世界模型、导航、操作、3D 感知等方向的持续文献调研。 |
-| [`research-wiki`](./research-wiki/) | 持久化项目级科研知识库，用于沉淀论文、想法、实验、主张以及它们之间的有类型关系。 | 把项目研究记忆固定下来，避免每个 session 都重新搭一遍同一张领域地图。 |
-| [`update-source-map`](./update-source-map/) | 为任意项目目录创建或更新 agent 可读的 source map，并在刷新时保留手写的 per-file 摘要。 | 处理新的或不熟悉的 workspace、刷新过期索引，或把项目交给另一个 agent。 |
+- [`alphaxiv`](./alphaxiv/) - 快速解释单篇 arXiv 论文，优先使用 AlphaXiv 内容，必要时再回退到源材料。
+- [`arxiv`](./arxiv/) - 搜索 arXiv、获取元数据，并把论文 PDF 下载到本地文献库。
+- [`doc-coauthoring`](./doc-coauthoring/) - 面向 spec、proposal、PRD、RFC、decision doc 的结构化协同写作流程。
+- [`docx`](./docx/) - 创建、检查和编辑 Word 文档，支持批注、修订等工作流。
+- [`drawio-diagram`](./drawio-diagram/) - 生成可编辑的 draw.io 科研图，并导出 PNG、SVG、PDF 后做视觉 QA。
+- [`figure-description`](./figure-description/) - 为专利附图生成正式说明文字和附图标记映射。
+- [`formula-derivation`](./formula-derivation/) - 从问题设定和假设出发整理、推导研究公式。
+- [`grant-proposal`](./grant-proposal/) - 基于研究想法和文献上下文撰写结构化基金申请书。
+- [`help-me-read`](./help-me-read/) - 深读用户提供的 PDF，并生成故事化、教学式的学习笔记。
+- [`mmx-cli`](./mmx-cli/) - 直接操作本地 MiniMax CLI，处理文本、搜索、视觉、额度和媒体任务。
+- [`mock-review`](./mock-review/) - 在正式投稿前，以 reviewer 视角对论文做一次模拟审稿。
+- [`novelty-check`](./novelty-check/) - 围绕相近工作检查研究想法的新颖性风险。
+- [`pdf`](./pdf/) - 处理 PDF 的阅读、提取、填写、编辑和生成任务，包含表单工作流。
+- [`phd-benchmark-paper-template`](./phd-benchmark-paper-template/) - 用五支柱框架组织 benchmark / evaluation 论文。
+- [`phd-figure-designer`](./phd-figure-designer/) - 设计并审查 technical paper 中最关键的几类图。
+- [`phd-idea-evaluator`](./phd-idea-evaluator/) - 从强度、可行性和生命周期匹配等维度评估研究想法。
+- [`phd-intro-drafter`](./phd-intro-drafter/) - 为 technical paper 构建六段式 Introduction 大纲。
+- [`phd-pre-submission-reviewer`](./phd-pre-submission-reviewer/) - 从逻辑、写作、语法、LaTeX、图质量等维度做投稿前审查。
+- [`phd-tech-paper-template`](./phd-tech-paper-template/) - 构建 technical paper 的逻辑骨架与一致性检查。
+- [`phd-vibe-research-workflow`](./phd-vibe-research-workflow/) - 规划 AI 辅助科研工作流，同时把学术判断牢牢留在用户手里。
+- [`pptx`](./pptx/) - 创建、检查和编辑 PowerPoint，并要求经过完整 QA 循环。
+- [`proof-writer`](./proof-writer/) - 把 theorem / lemma 的草稿和思路整理成严谨证明。
+- [`research-lit`](./research-lit/) - 结合本地 PDF、公开网络和 arXiv 元数据做独立文献调研。
+- [`research-survey-loop`](./research-survey-loop/) - 维护长期 survey 任务，持续读文献并迭代写中文综述。
+- [`research-wiki`](./research-wiki/) - 构建项目级持久化 research wiki，沉淀论文、想法、实验和 claim。
+- [`theme-factory`](./theme-factory/) - 为 slides、docs 和轻量 artifact 应用内置主题或派生新主题。
+- [`update-source-map`](./update-source-map/) - 为陌生代码仓库建立或刷新结构化 source map。
+- [`xlsx`](./xlsx/) - 创建、修复、分析和扩展 spreadsheet 文件，同时保留公式和工作簿结构。
 
 ## 安装
 
-安装单元就是每个顶层 skill 目录本身：
+把每个顶层 skill 目录直接复制到 `$CODEX_HOME/skills`：
 
 ```text
 source: <this-repo>/<skill>/
@@ -40,23 +48,13 @@ copy the directory contents as-is
 skip any __pycache__ directory
 ```
 
-如果要安装本仓库的全部 skills，请把以下目录复制到本地 Codex skills 目录：
+不要把 `temp/` 这类仓库内的辅助目录安装进去。
 
-```text
-alphaxiv, arxiv, drawio-diagram, figure-description, formula-derivation,
-grant-proposal, help-me-read, mmx-cli, mock-review, novelty-check,
-proof-writer, research-lit, research-survey-loop, research-wiki,
-update-source-map
-```
-
-不要把 `scripts/` 这样的仓库工具目录安装进 `$CODEX_HOME/skills`。
-
-安装或更新本地 skills 后，需要重启 Codex，新的 skill metadata 才会被加载。
+安装或更新后，重启 Codex，让新的 skill metadata 生效。
 
 ## 说明
 
-- 这些 skills 是个人科研工作流沉淀，不代表任何会议、期刊或机构的官方流程。
-- `mmx-cli` 需要本地已经配置好 `mmx` 命令。
-- `drawio-diagram` 面向需要保留可编辑 draw.io 草稿的图示工作流；只有视觉 QA 循环通过后才应宣布图已完成。
-- 使用 `mock-review` 生成的内容应明确标注为 simulated/mock review，不能冒充官方审稿意见。
-- 文献下载和调研应优先使用官方开放页面、arXiv、OpenReview、作者主页等合法可访问来源。
+- `phd-` 前缀用于给导入的论文写作和科研规划类 skill 做命名空间隔离。
+- 这些 skill 按“独立 Codex 使用”设计，默认可以使用本地脚本、本地文件和常规网页访问。
+- 部分 skill 依赖本地工具，例如 LibreOffice、Poppler、`pandoc`、`markitdown`、`mmx` 或其他运行时，具体要求见各 skill 内部说明。
+- `mock-review` 这类 review 风格 skill 产生的是模拟反馈，不能冒充正式审稿意见。

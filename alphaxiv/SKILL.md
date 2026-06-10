@@ -11,10 +11,7 @@ Lookup paper: $ARGUMENTS
 
 ## Role & Positioning
 
-This skill is a **quick single-paper reader** for one known arXiv paper. It is
-best when the user provides a bare arXiv ID, an arXiv URL, a PDF URL, or an
-AlphaXiv URL and wants a concise explanation without running a broad literature
-survey.
+This skill is a **quick single-paper reader** for one known arXiv paper. It is best when the user provides a bare arXiv ID, an arXiv URL, a PDF URL, or an AlphaXiv URL and wants a concise explanation without running a broad literature survey.
 
 ## Constants
 
@@ -22,11 +19,7 @@ survey.
 - **ABS_URL** = `https://alphaxiv.org/abs/{PAPER_ID}.md`
 - **ARXIV_SRC_URL** = `https://arxiv.org/src/{PAPER_ID}`
 
-> Overrides (append to arguments):
-> - `/alphaxiv 2401.12345` — quick overview
-> - `/alphaxiv "https://arxiv.org/abs/2401.12345"` — auto-extract ID
-> - `/alphaxiv 2401.12345 - depth: src` — force LaTeX source inspection
-> - `/alphaxiv 2401.12345 - depth: abs` — force full markdown
+> Overrides (append to arguments): > - `/alphaxiv 2401.12345` — quick overview > - `/alphaxiv "https://arxiv.org/abs/2401.12345"` — auto-extract ID > - `/alphaxiv 2401.12345 - depth: src` — force LaTeX source inspection > - `/alphaxiv 2401.12345 - depth: abs` — force full markdown
 
 ## Workflow
 
@@ -42,8 +35,7 @@ Parse `$ARGUMENTS` to extract a bare arXiv paper ID. Accept these input formats:
 
 Strip version suffixes (`v1`, `v2`, ...) for API calls. Store as `PAPER_ID`.
 
-Parse optional directives:
-- **`- depth: overview|abs|src`**: force a specific tier instead of cascading
+Parse optional directives: - **`- depth: overview|abs|src`**: force a specific tier instead of cascading
 
 ### Step 2: Fetch AlphaXiv Overview (Tier 1 — Fastest)
 
@@ -59,10 +51,7 @@ If the request fails (HTTP 404 — paper not yet processed) or the content is in
 
 Fetch the full paper markdown from `https://alphaxiv.org/abs/{PAPER_ID}.md`.
 
-This provides the full paper body as markdown. Use when the user needs:
-- Specific methodology details
-- Detailed experimental results
-- Particular sections not covered in the overview
+This provides the full paper body as markdown. Use when the user needs: - Specific methodology details - Detailed experimental results - Particular sections not covered in the overview
 
 If this still does not answer the question, proceed to Step 4.
 

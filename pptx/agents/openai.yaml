@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPTX Presentations"
+  short_description: "Build and edit PowerPoint decks"
+  default_prompt: "Use $pptx to create or revise this slide deck, then run the required QA loop on the rendered slides."
