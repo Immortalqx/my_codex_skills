@@ -16,3 +16,6 @@ venv/
 survey_tasks/
 papers/
 industry_report/
+
+# Local tooling (one-off scripts, scratch space)
+temp/
