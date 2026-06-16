@@ -20,7 +20,6 @@
 | [`figure-description`](./figure-description/) | 为专利附图生成正式说明文字和附图标记映射。 | 根据本地技术图准备 CN/US/EP 专利附图说明和附图标记索引。 |
 | [`formula-derivation`](./formula-derivation/) | 从问题设定和假设出发整理、推导研究公式。 | 把理论笔记整理成论文风格推导框架或 blocker report。 |
 | [`grant-proposal`](./grant-proposal/) | 基于研究想法和文献上下文撰写结构化基金申请书。 | 把研究方向转成带机构格式、研究目标、里程碑和预期成果的 funding application。 |
-| [`help-me-read`](./help-me-read/) | 深读用户提供的 PDF，并生成故事化、教学式的学习笔记。 | 精读 lecture slides 或论文，输出带图表解释和背景补充的详细笔记。 |
 | [`mmx-cli`](./mmx-cli/) | 直接操作本地 MiniMax CLI，处理文本、搜索、视觉、额度和媒体任务。 | 当 Codex 需要通过已配置好的本地 `mmx` 命令工作时使用。 |
 | [`mock-review`](./mock-review/) | 在正式投稿前，以 reviewer 视角对论文做一次模拟审稿。 | 投稿前风险排查、rebuttal 准备和 reviewer-style critique。 |
 | [`novelty-check`](./novelty-check/) | 围绕相近工作检查研究想法的新颖性风险。 | 在投入实现时间前先筛查一个方法是否可能已经被做过。 |

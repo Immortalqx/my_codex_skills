@@ -20,7 +20,6 @@ Unless a skill explicitly says otherwise, these skills are designed for standalo
 | [`figure-description`](./figure-description/) | Generate patent-style figure descriptions and reference-numeral mappings from local figures. | Preparing CN/US/EP patent drawing descriptions from technical figures. |
 | [`formula-derivation`](./formula-derivation/) | Structure and derive research formulas from assumptions and problem statements. | Turning theory notes into a paper-ready derivation skeleton or blocker report. |
 | [`grant-proposal`](./grant-proposal/) | Draft structured grant proposals from research ideas and literature context. | Turning a research direction into a funding application with agency-specific structure. |
-| [`help-me-read`](./help-me-read/) | Deep-read a user-provided PDF and produce a story-driven study note. | Close-reading lecture slides or academic papers with detailed notes and figure explanations. |
 | [`mmx-cli`](./mmx-cli/) | Operate the local MiniMax CLI for text, search, vision, quota, and media tasks. | Running MiniMax-specific workflows through a configured local `mmx` command. |
 | [`mock-review`](./mock-review/) | Run a simulated reviewer-style critique of a manuscript before submission. | Pre-submission risk review, rebuttal preparation, and reviewer-style paper critique. |
 | [`novelty-check`](./novelty-check/) | Check whether a research idea appears novel against nearby prior work. | Screening an idea for prior-art overlap before investing implementation time. |
