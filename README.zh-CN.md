@@ -23,6 +23,7 @@
 | [`mmx-cli`](./mmx-cli/) | 直接操作本地 MiniMax CLI，处理文本、搜索、视觉、额度和媒体任务。 | 当 Codex 需要通过已配置好的本地 `mmx` 命令工作时使用。 |
 | [`mock-review`](./mock-review/) | 在正式投稿前，以 reviewer 视角对论文做一次模拟审稿。 | 投稿前风险排查、rebuttal 准备和 reviewer-style critique。 |
 | [`novelty-check`](./novelty-check/) | 围绕相近工作检查研究想法的新颖性风险。 | 在投入实现时间前先筛查一个方法是否可能已经被做过。 |
+| [`paper-reading`](./paper-reading/) | 深入精读单篇论文，并产出结构化、带批判性的阅读笔记。 | 单篇论文理解、证据核查、benchmark 审计和可复用论文笔记整理。 |
 | [`pdf`](./pdf/) | 处理 PDF 的阅读、提取、填写、编辑和生成任务，包含表单工作流。 | PDF 提取、表单填写、编辑和验证型文档处理。 |
 | [`phd-benchmark-paper-template`](./phd-benchmark-paper-template/) | 用五支柱框架组织 benchmark / evaluation 论文。 | 规划 benchmark 或 evaluation 论文的 Introduction 逻辑、pipeline 和实验结构。 |
 | [`phd-figure-designer`](./phd-figure-designer/) | 设计并审查 technical paper 中最关键的几类图。 | 决定论文图的范式、布局、标注和 QA 规则。 |

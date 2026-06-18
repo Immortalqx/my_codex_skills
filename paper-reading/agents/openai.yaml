@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Reading"
+  short_description: "Deep single-paper reading workflow"
+  default_prompt: "Use $paper-reading to deeply read this paper, audit its evidence, and produce a structured reading note."

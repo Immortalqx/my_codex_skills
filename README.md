@@ -23,6 +23,7 @@ Unless a skill explicitly says otherwise, these skills are designed for standalo
 | [`mmx-cli`](./mmx-cli/) | Operate the local MiniMax CLI for text, search, vision, quota, and media tasks. | Running MiniMax-specific workflows through a configured local `mmx` command. |
 | [`mock-review`](./mock-review/) | Run a simulated reviewer-style critique of a manuscript before submission. | Pre-submission risk review, rebuttal preparation, and reviewer-style paper critique. |
 | [`novelty-check`](./novelty-check/) | Check whether a research idea appears novel against nearby prior work. | Screening an idea for prior-art overlap before investing implementation time. |
+| [`paper-reading`](./paper-reading/) | Deeply read one research paper and turn it into a structured, critical reading note. | Single-paper understanding, evidence audit, benchmark checking, and reusable paper notes. |
 | [`pdf`](./pdf/) | Read, extract, fill, edit, and generate PDFs, including form workflows. | PDF extraction, form handling, annotation, and validation-heavy PDF tasks. |
 | [`phd-benchmark-paper-template`](./phd-benchmark-paper-template/) | Structure benchmark and evaluation papers around the five-pillar framework. | Planning benchmark or evaluation papers, their Introduction logic, pipeline, and experiments. |
 | [`phd-figure-designer`](./phd-figure-designer/) | Design and audit the core figures in a technical paper. | Deciding paradigms, layouts, labels, and QA rules for paper figures. |
